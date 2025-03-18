@@ -1,0 +1,1 @@
+ALTER TABLE "user" ADD COLUMN "finished_onboard" boolean DEFAULT false NOT NULL;
