@@ -1,6 +1,23 @@
 <script lang="ts">
+	import { currentUser } from '$lib/stores/user';
 	import '../app.css';
-	let { children } = $props();
+  
+  let {data, children} = $props<{
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		data: { userSession?: any; };
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		children: any;
+	}>();
+
+
+  $effect(() => {
+    if (data?.userSession) {
+      currentUser.set(data.userSession)
+    } else {
+      currentUser.set(null)
+    }
+  })
+
 </script>
 
 <svelte:head>
