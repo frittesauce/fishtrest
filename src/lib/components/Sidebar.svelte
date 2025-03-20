@@ -14,7 +14,7 @@
 	<p>yahho this is a side bar!!</p>
   
   {#if $currentUser}
-	<p>bro is locked in</p>
+	  <p>bro is locked in!</p>
   {:else}
     <button on:click={login}>login my guy</button>
   {/if}
