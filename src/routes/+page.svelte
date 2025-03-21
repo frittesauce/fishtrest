@@ -2,12 +2,13 @@
 	import { env } from '$env/dynamic/public';
 	import { signIn } from '$lib/auth-client';
 	import { currentUser } from '$lib/stores/user';
-	import { username } from 'better-auth/plugins';
-	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { preventDefault } from 'svelte/legacy';
 
 	let { data } = $props();
+
+	let userData = {
+		username: ''
+	};
 
 	let inCreation: boolean = false;
 	let step: number = $state(0);
@@ -57,6 +58,8 @@
 		class="font-normal"
 		onsubmit={async (e) => {
 			e.preventDefault();
+
+			console.log(usernameInput);
 			enableSubmitButton = false;
 			if (usernameInput.replace(/[^0-9a-z]/gi, '').length < 3) {
 				toast.error('username must atleast be 3 characters!');
@@ -68,6 +71,7 @@
 
 			if (response.ok) {
 				step = 3;
+				userData.username = usernameInput;
 				return;
 			}
 
@@ -93,7 +97,9 @@
 			required
 			placeholder="@phpfan2018"
 		/>
-		<button type="submit" disabled={!enableSubmitButton}> confirm? </button>
+		<button type="submit" disabled={!enableSubmitButton}>
+			{enableSubmitButton ? 'confirm!' : 'loading'}
+		</button>
 	</form>
 {/snippet}
 

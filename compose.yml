@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - '3000:3000'
     environment:
       - MINIO_ENDPOINT=${SVELTEKIT_MINIO_ENDPOINT}
       - MINIO_ROOT_USER=${MINIO_ROOT_USER}
@@ -28,7 +28,7 @@ services:
     volumes:
       - minio-data:/data
     ports:
-      - "9000:9000"
+      - '9000:9000'
     command: server /data
     networks:
       - sveltekit-network
@@ -41,4 +41,3 @@ volumes:
 networks:
   sveltekit-network:
     driver: bridge
-
