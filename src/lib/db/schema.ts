@@ -1,4 +1,14 @@
-import { pgTable, text, timestamp, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, boolean, bigserial } from 'drizzle-orm/pg-core';
+
+export const profile = pgTable('profile', {
+	id: bigserial({ mode: 'number' }).unique().primaryKey(),
+	handle: text('handle').unique().notNull(),
+	avatarUrl: text('avatar_url'),
+	bio: text('bio').default('hello i like cats!'),
+	userId: text('user_id')
+		.notNull()
+		.references(() => user.id, { onDelete: 'cascade' })
+});
 
 export const user = pgTable('user', {
 	id: text('id').primaryKey(),
@@ -9,8 +19,7 @@ export const user = pgTable('user', {
 	createdAt: timestamp('created_at').notNull(),
 	updatedAt: timestamp('updated_at').notNull(),
 	finishedOnboard: boolean('finished_onboard').default(false).notNull(),
-	role: text('role').default('user').notNull(),
-	handle: text('handle').unique()
+	role: text('role').default('user').notNull()
 });
 
 export const session = pgTable('session', {

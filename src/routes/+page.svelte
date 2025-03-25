@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { env } from '$env/dynamic/public';
+	import { PUBLIC_CDN_URL } from '$env/static/public';
 	import { signIn } from '$lib/auth-client';
 	import { currentUser } from '$lib/stores/user';
 	import { toast } from 'svelte-sonner';
@@ -9,6 +10,9 @@
 	let userData = {
 		username: ''
 	};
+
+	let avatar = $state(),
+		fileInput = $state();
 
 	let inCreation: boolean = false;
 	let step: number = $state(0);
@@ -40,6 +44,39 @@
 
 	let usernameInput: string = $state('');
 	let enableSubmitButton: boolean = $state(true);
+
+	const handleUsernameSubmit = async (e: { preventDefault: () => void }) => {
+		e.preventDefault();
+
+		console.log(usernameInput);
+		enableSubmitButton = false;
+		if (usernameInput.replace(/[^0-9a-z]/gi, '').length < 3) {
+			toast.error('username must atleast be 3 characters!');
+			return;
+		}
+
+		const response = await fetch(`/api/usernameAvailable?username=${usernameInput}`);
+		const body = await response.json();
+
+		if (response.ok) {
+			step = 3;
+			userData.username = usernameInput;
+			return;
+		}
+
+		switch (response.status) {
+			case 400:
+				toast.error('something went wrong please try again later');
+				break;
+			case 409:
+				toast.error('username is already taken!');
+				break;
+			default:
+				toast.error('something went wrong please try again later');
+				break;
+		}
+		enableSubmitButton = true;
+	};
 </script>
 
 {#snippet authMethod()}
@@ -54,38 +91,7 @@
 
 {#snippet userName()}
 	<h2 class=" text-xl">what shall we call you?</h2>
-	<form
-		class="font-normal"
-		onsubmit={async (e) => {
-			e.preventDefault();
-
-			console.log(usernameInput);
-			enableSubmitButton = false;
-			if (usernameInput.replace(/[^0-9a-z]/gi, '').length < 3) {
-				toast.error('username must atleast be 3 characters!');
-				return;
-			}
-
-			const response = await fetch(`/api/usernameAvailable?username=${usernameInput}`);
-			const body = await response.json();
-
-			if (response.ok) {
-				step = 3;
-				userData.username = usernameInput;
-				return;
-			}
-
-			switch (body.status) {
-				case 400:
-					toast.error('something went wrong please try again later');
-				case 409:
-					toast.error('username is already taken!');
-				default:
-					toast.error('something went wrong please try again later');
-			}
-			enableSubmitButton = true;
-		}}
-	>
+	<form class="font-normal" onsubmit={handleUsernameSubmit}>
 		<input
 			name="username"
 			class=" text-lg2 h-8 w-64 rounded-lg border shadow"
@@ -101,6 +107,15 @@
 			{enableSubmitButton ? 'confirm!' : 'loading'}
 		</button>
 	</form>
+{/snippet}
+
+{#snippet imageUpload()}
+	<h2>upload a profile picture!</h2>
+	<div>
+		{#if avatar}
+			<img src={avatar} alt="avatar" />
+		{/if}
+	</div>
 {/snippet}
 
 <div class="relative min-h-screen w-full overflow-x-hidden">
@@ -128,7 +143,7 @@
 				<div class="max-w-[600px] text-center text-lg font-semibold sm:text-xl">
 					<h1>Creating Account</h1>
 					<hr class=" m-4 bg-gray-400" />
-					{@render pages[step]()}
+					{@render pages[step as keyof typeof pages]()}
 				</div>
 			{/if}
 		</div>

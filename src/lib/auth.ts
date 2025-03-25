@@ -26,12 +26,6 @@ export const auth = betterAuth({
 				required: true,
 				defaultValue: 'false',
 				input: false
-			},
-			handle: {
-				type: 'string',
-				required: true,
-				defaultValue: '',
-				input: false
 			}
 		}
 	}
