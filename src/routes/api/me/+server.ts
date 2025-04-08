@@ -19,5 +19,13 @@ export const GET: RequestHandler = async ({ request }: { request: Request }) => 
 		.where(eq(profile.userId, session?.user.id))
 		.limit(1);
 
-	return json({ session, profile: profileDb }, { status: 200 });
+	return json(
+		{
+			data: {
+				session: session,
+				profile: profileDb
+			}
+		},
+		{ status: 200 }
+	);
 };

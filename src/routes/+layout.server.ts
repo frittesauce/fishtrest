@@ -9,7 +9,9 @@ export const load: LayoutServerLoad = async (event) => {
 	const body = await sessionResponse.json();
 
 	return {
-		userSession: body?.user || null,
-		userProfile: body?.profile || null
+		data: {
+			userSession: body?.data?.session,
+			userProfile: body?.data?.profile
+		}
 	};
 };

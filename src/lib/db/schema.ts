@@ -1,7 +1,7 @@
-import { pgTable, text, timestamp, boolean, bigserial } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, boolean, serial } from 'drizzle-orm/pg-core';
 
 export const profile = pgTable('profile', {
-	id: bigserial({ mode: 'number' }).unique().primaryKey(),
+	id: serial('id').primaryKey(),
 	handle: text('handle').unique().notNull(),
 	avatarUrl: text('avatar_url'),
 	bio: text('bio').default('hello i like cats!'),

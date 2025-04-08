@@ -1,10 +1,10 @@
 @import 'tailwindcss';
 
 @font-face {
-    font-family: "ComicShannsMono";
-    src: url("/fonts/comicSans.otf");
+	font-family: 'ComicShannsMono';
+	src: url('/fonts/comicSans.otf');
 }
 
 * {
-    font-family: "ComicShannsMono";
+	font-family: 'ComicShannsMono';
 }

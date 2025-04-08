@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { env } from '$env/dynamic/public';
-	import { PUBLIC_CDN_URL } from '$env/static/public';
 	import { signIn } from '$lib/auth-client';
 	import { currentUser } from '$lib/stores/user';
 	import { toast } from 'svelte-sonner';
@@ -11,12 +10,11 @@
 		username: ''
 	};
 
-	let avatar = $state(),
-		fileInput = $state();
+	let avatar = $state('/default.png');
+	let fileInput: Blob = $state(new Blob());
 
 	let inCreation: boolean = false;
 	let step: number = $state(0);
-	// svelte-ignore state_referenced_locally
 	let topMargin: string = $state(inCreation ? '40vh' : '15vh');
 
 	$effect(() => {
@@ -40,7 +38,21 @@
 		});
 	}
 
-	const pages = { 1: authMethod, 2: userName };
+	function handleImageUpload() {
+		let inputElement = document.createElement('input');
+		inputElement.type = 'file';
+		inputElement.accept = 'image/*';
+		inputElement.onchange = (e: any) => {
+			let file = e.target?.files[0];
+			if (file) {
+				fileInput = file;
+				avatar = URL.createObjectURL(fileInput);
+			}
+		};
+		inputElement.click();
+	}
+
+	const pages = { 1: authMethod, 2: userName, 3: imageUpload, 4: finishPage };
 
 	let usernameInput: string = $state('');
 	let enableSubmitButton: boolean = $state(true);
@@ -56,7 +68,6 @@
 		}
 
 		const response = await fetch(`/api/usernameAvailable?username=${usernameInput}`);
-		const body = await response.json();
 
 		if (response.ok) {
 			step = 3;
@@ -77,6 +88,19 @@
 		}
 		enableSubmitButton = true;
 	};
+	// console.log($currentUser);
+
+	async function handleFinish() {
+		const formdata = new FormData();
+
+		formdata.append('image', fileInput);
+		formdata.append('username', usernameInput);
+
+		const res = await fetch('/api/profileInit', {
+			method: 'POST',
+			body: formdata
+		});
+	}
 </script>
 
 {#snippet authMethod()}
@@ -112,10 +136,28 @@
 {#snippet imageUpload()}
 	<h2>upload a profile picture!</h2>
 	<div>
-		{#if avatar}
-			<img src={avatar} alt="avatar" />
-		{/if}
+		<button
+			onclick={() => {
+				handleImageUpload();
+			}}
+		>
+			<img src={avatar} alt="cool" class=" h-96 w-96 rounded-full hover:cursor-pointer" />
+		</button>
 	</div>
+	<button
+		onclick={() => {
+			step = 4;
+		}}>done!</button
+	>
+{/snippet}
+
+{#snippet finishPage()}
+	<h2>is this correct?</h2>
+	<div class="flex">
+		<img src={avatar} alt="your avatar" class="h-96 w-96 rounded-full" />
+		<p>{usernameInput}</p>
+	</div>
+	<button onclick={handleFinish}>yes!</button>
 {/snippet}
 
 <div class="relative min-h-screen w-full overflow-x-hidden">

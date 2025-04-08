@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { currentUser } from '$lib/stores/user';
-	import { Toaster, toast } from 'svelte-sonner';
+	import { Toaster } from 'svelte-sonner';
 
 	import '../app.css';
 	import { currentProfile } from '@/stores/profile';
@@ -13,13 +13,13 @@
 	}>();
 
 	$effect(() => {
-		if (data?.userSession) {
-			currentUser.set(data.userSession);
+		if (data?.data.userSession) {
+			currentUser.set(data.data.userSession);
 		} else {
 			currentUser.set(null);
 		}
-		if (data?.userProfile) {
-			currentProfile.set(data.userProfile);
+		if (data?.data?.userProfile) {
+			currentProfile.set(data.data.userProfile);
 		} else {
 			currentProfile.set(null);
 		}

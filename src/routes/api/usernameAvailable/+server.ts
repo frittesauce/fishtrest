@@ -4,13 +4,11 @@ import { json, type RequestHandler } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 
 export const GET: RequestHandler = async ({ url }: { url: URL }) => {
-	let username = url.searchParams.get('username');
+	const username = url.searchParams.get('username');
 
 	if (!username) {
 		return json({ error: 'username is missing!' }, { status: 400 });
 	}
-
-	username = username.replace('@', '');
 
 	if (username.length > 21) {
 		return json({ error: 'username cant be longer than 21 characters' }, { status: 400 });

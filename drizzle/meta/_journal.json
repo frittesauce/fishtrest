@@ -1,41 +1,13 @@
 {
-  "version": "7",
-  "dialect": "postgresql",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "7",
-      "when": 1742296028864,
-      "tag": "0000_daffy_sage",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1742315794625,
-      "tag": "0001_demonic_starbolt",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1742317644081,
-      "tag": "0002_damp_retro_girl",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1742461661432,
-      "tag": "0003_condemned_owl",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1742817837498,
-      "tag": "0004_tiny_roxanne_simpson",
-      "breakpoints": true
-    }
-  ]
+	"version": "7",
+	"dialect": "postgresql",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "7",
+			"when": 1744117383971,
+			"tag": "0000_equal_polaris",
+			"breakpoints": true
+		}
+	]
 }
