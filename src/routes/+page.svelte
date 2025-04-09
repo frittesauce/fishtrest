@@ -3,6 +3,7 @@
 	import { signIn } from '$lib/auth-client';
 	import { currentUser } from '$lib/stores/user';
 	import { toast } from 'svelte-sonner';
+	import Avatar from '../components/Avatar.svelte';
 
 	let { data } = $props();
 
@@ -88,8 +89,6 @@
 		}
 		enableSubmitButton = true;
 	};
-	// console.log($currentUser);
-
 	async function handleFinish() {
 		const formdata = new FormData();
 
@@ -146,6 +145,9 @@
 	</div>
 	<button
 		onclick={() => {
+			if (fileInput.size <= 0) {
+				return toast.error('kutje upload wel een foto kut kind');
+			}
 			step = 4;
 		}}>done!</button
 	>
@@ -161,33 +163,38 @@
 {/snippet}
 
 <div class="relative min-h-screen w-full overflow-x-hidden">
-	<div class="mx-auto px-4">
-		<div
-			class="flex w-full flex-col items-center transition-all duration-700 ease-out"
-			style="margin-top: calc(50vh - {topMargin}"
-		>
-			<div class=" flex flex-col justify-center gap-3 text-center sm:gap-8">
-				<h1 class=" text-6xl font-bold sm:text-8xl">fishtrest</h1>
-				{#if step == 0}
-					<p class=" text-xl sm:text-2xl">the number 1 image sharing platform</p>
-					<button
-						onclick={() => {
-							handleAuth();
-						}}
-						class=" w-max self-center rounded-xl bg-indigo-800 p-2 text-2xl font-semibold text-white sm:p-4 sm:text-3xl"
-						>Join Today</button
-					>
-				{:else}
-					<hr class=" mb-6 bg-gray-400" />
+	{#if true == true}
+		<div class="mx-auto px-4">
+			<div
+				class="flex w-full flex-col items-center transition-all duration-700 ease-out"
+				style="margin-top: calc(50vh - {topMargin}"
+			>
+				<div class=" flex flex-col justify-center gap-3 text-center sm:gap-8">
+					<h1 class=" text-6xl font-bold sm:text-8xl">fishtrest</h1>
+					{#if step == 0}
+						<p class=" text-xl sm:text-2xl">the number 1 image sharing platform</p>
+						<button
+							onclick={() => {
+								handleAuth();
+							}}
+							class=" w-max self-center rounded-xl bg-indigo-800 p-2 text-2xl font-semibold text-white sm:p-4 sm:text-3xl"
+							>Join Today</button
+						>
+					{:else}
+						<hr class=" mb-6 bg-gray-400" />
+					{/if}
+				</div>
+				{#if step >= 1}
+					<div class="max-w-[600px] text-center text-lg font-semibold sm:text-xl">
+						<h1>Creating Account</h1>
+						<hr class=" m-4 bg-gray-400" />
+						{@render pages[step as keyof typeof pages]()}
+					</div>
 				{/if}
 			</div>
-			{#if step >= 1}
-				<div class="max-w-[600px] text-center text-lg font-semibold sm:text-xl">
-					<h1>Creating Account</h1>
-					<hr class=" m-4 bg-gray-400" />
-					{@render pages[step as keyof typeof pages]()}
-				</div>
-			{/if}
 		</div>
-	</div>
+	{:else}
+		<p>kijk naar deze post</p>
+		<Avatar alt="skibidi" src={`${env.PUBLIC_CDN_URL}/avatars/9/medium.jpg`}></Avatar>
+	{/if}
 </div>

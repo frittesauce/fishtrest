@@ -54,6 +54,8 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		await minioClient.putObject(bucket, objectName, processedBuffer);
 
+		await db.update(profile).set({ avatarUrl: objectName }).where(eq(profile.id, newProfile.id));
+
 		return json({ error: 's' });
 	} catch (error) {
 		console.log(error);
