@@ -4,6 +4,8 @@
 
 	import '../app.css';
 	import { currentProfile } from '@/stores/profile';
+	import { loading } from '@/stores/loading';
+	import LoadingComponent from '../components/LoadingComponent.svelte';
 
 	let { data, children } = $props<{
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -38,4 +40,8 @@
 </svelte:head>
 
 <Toaster richColors />
-{@render children()}
+{#if $loading}
+	<LoadingComponent></LoadingComponent>
+{:else}
+	{@render children()}
+{/if}

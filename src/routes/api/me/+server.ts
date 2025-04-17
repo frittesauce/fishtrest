@@ -22,7 +22,7 @@ export const GET: RequestHandler = async ({ request }: { request: Request }) => 
 	return json(
 		{
 			data: {
-				session: session,
+				session: session.user,
 				profile: profileDb
 			}
 		},

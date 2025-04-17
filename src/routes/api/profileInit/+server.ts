@@ -45,7 +45,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		await db.update(user).set({ finishedOnboard: true }).where(eq(user.id, newProfile.userId));
 		const objectName = `${newProfile.id}/medium.jpg`;
-		const buffer = Buffer.from(await file.arrayBuffer());
+		const buffer = Buffer.from(await file?.arrayBuffer());
 
 		const processedBuffer = await sharp(buffer)
 			.resize(320, 320, { fit: 'cover', position: 'center' })
@@ -56,9 +56,9 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		await db.update(profile).set({ avatarUrl: objectName }).where(eq(profile.id, newProfile.id));
 
-		return json({ error: 's' });
+		return json({ message: 'done!' }, { status: 200 });
 	} catch (error) {
 		console.log(error);
-		return json({ error: error });
+		return json({ error: error }, { status: 400 });
 	}
 };

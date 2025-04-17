@@ -4,6 +4,8 @@
 	import { currentUser } from '$lib/stores/user';
 	import { toast } from 'svelte-sonner';
 	import Avatar from '../components/Avatar.svelte';
+	import { currentProfile } from '@/stores/profile';
+	import { goto } from '$app/navigation';
 
 	let { data } = $props();
 
@@ -73,6 +75,7 @@
 		if (response.ok) {
 			step = 3;
 			userData.username = usernameInput;
+			enableSubmitButton = true;
 			return;
 		}
 
@@ -89,6 +92,7 @@
 		}
 		enableSubmitButton = true;
 	};
+
 	async function handleFinish() {
 		const formdata = new FormData();
 
@@ -99,6 +103,10 @@
 			method: 'POST',
 			body: formdata
 		});
+
+		if (res.ok) {
+			goto(data.Callback ? data.Callback : '/');
+		}
 	}
 </script>
 
@@ -159,11 +167,13 @@
 		<img src={avatar} alt="your avatar" class="h-96 w-96 rounded-full" />
 		<p>{usernameInput}</p>
 	</div>
-	<button onclick={handleFinish}>yes!</button>
+	<button disabled={!enableSubmitButton} onclick={handleFinish}
+		>{enableSubmitButton ? 'confirm' : 'loading'}</button
+	>
 {/snippet}
 
 <div class="relative min-h-screen w-full overflow-x-hidden">
-	{#if true == true}
+	{#if !$currentUser?.finishedOnboard}
 		<div class="mx-auto px-4">
 			<div
 				class="flex w-full flex-col items-center transition-all duration-700 ease-out"
@@ -195,6 +205,7 @@
 		</div>
 	{:else}
 		<p>kijk naar deze post</p>
-		<Avatar alt="skibidi" src={`${env.PUBLIC_CDN_URL}/avatars/9/medium.jpg`}></Avatar>
+		<Avatar alt="skibidi" src={`${env.PUBLIC_CDN_URL}/avatars/${$currentProfile?.avatarUrl}`}
+		></Avatar>
 	{/if}
 </div>
