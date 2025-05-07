@@ -3,9 +3,8 @@
 	import { signIn } from '$lib/auth-client';
 	import { currentUser } from '$lib/stores/user';
 	import { toast } from 'svelte-sonner';
-	import Avatar from '../components/Avatar.svelte';
-	import { currentProfile } from '@/stores/profile';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
+	import LoggedInPage from './LoggedInPage.svelte';
 
 	let { data } = $props();
 
@@ -37,7 +36,7 @@
 	async function handleLogin(provider: 'discord') {
 		signIn.social({
 			provider: provider,
-			callbackURL: env.PUBLIC_BASE_URL + '?callback=/'
+			callbackURL: env.PUBLIC_BASE_URL + '?callback='
 		});
 	}
 
@@ -105,7 +104,8 @@
 		});
 
 		if (res.ok) {
-			goto(data.Callback ? data.Callback : '/');
+			goto(data.Callback ? `/${data.Callback}` : '/', { replaceState: true });
+			invalidateAll();
 		}
 	}
 </script>
@@ -204,8 +204,6 @@
 			</div>
 		</div>
 	{:else}
-		<p>kijk naar deze post</p>
-		<Avatar alt="skibidi" src={`${env.PUBLIC_CDN_URL}/avatars/${$currentProfile?.avatarUrl}`}
-		></Avatar>
+		<LoggedInPage></LoggedInPage>
 	{/if}
 </div>

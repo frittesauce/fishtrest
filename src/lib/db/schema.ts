@@ -1,5 +1,15 @@
 import { pgTable, text, timestamp, boolean, serial } from 'drizzle-orm/pg-core';
 
+export const post = pgTable('posts', {
+	id: serial('id').primaryKey(),
+	title: text('title').notNull(),
+	description: text('description'),
+	image: text('image').notNull(),
+	userId: serial('user_id')
+		.notNull()
+		.references(() => profile.id, { onDelete: 'cascade' })
+});
+
 export const profile = pgTable('profile', {
 	id: serial('id').primaryKey(),
 	handle: text('handle').unique().notNull(),
