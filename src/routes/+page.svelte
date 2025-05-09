@@ -36,7 +36,7 @@
 	async function handleLogin(provider: 'discord') {
 		signIn.social({
 			provider: provider,
-			callbackURL: env.PUBLIC_BASE_URL + '?callback='
+			callbackURL: env.PUBLIC_BASE_URL
 		});
 	}
 

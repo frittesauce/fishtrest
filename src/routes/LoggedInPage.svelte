@@ -1,14 +1,28 @@
 <script lang="ts">
-	import { env } from '$env/dynamic/public';
-	import Avatar from '../components/Avatar.svelte';
-	import { currentProfile } from '@/stores/profile';
+	import Post from '../components/Post.svelte';
+	import { onMount } from 'svelte';
+	import { toast } from 'svelte-sonner';
+	import SideBar from '../components/SideBar.svelte';
+	import AppLayout from '../components/AppLayout.svelte';
+
+	let feed: [] = [];
+
+	onMount(async () => {
+		const response = await fetch('/api/feed');
+
+		if (!response.ok) {
+			return toast.error('failed to fetch feed, try again later!');
+		}
+
+		feed = await response.json();
+		console.log(feed);
+	});
 </script>
 
-<div>
-	<aside>
-		<p>kijk naar deze post</p>
-		<Avatar alt="skibidi" src={`${env.PUBLIC_CDN_URL}/avatars/${$currentProfile?.avatarUrl}`}
-		></Avatar>
-	</aside>
-	<main></main>
-</div>
+<AppLayout>
+	<main class=" flex flex-wrap justify-between">
+		{#each feed as feedItem}
+			<Post post={feedItem}></Post>
+		{/each}
+	</main>
+</AppLayout>
