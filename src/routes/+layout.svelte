@@ -6,6 +6,7 @@
 	import { currentProfile } from '@/stores/profile';
 	import { loading } from '@/stores/loading';
 	import LoadingComponent from '../components/LoadingComponent.svelte';
+	import SideBar from '../components/SideBar.svelte';
 
 	let { data, children } = $props<{
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -43,5 +44,6 @@
 {#if $loading}
 	<LoadingComponent></LoadingComponent>
 {:else}
+	<SideBar></SideBar>
 	{@render children()}
 {/if}

@@ -4,7 +4,7 @@ export const post = pgTable('posts', {
 	id: serial('id').primaryKey(),
 	title: text('title').notNull(),
 	description: text('description'),
-	image: text('image').notNull(),
+	image: text('image'),
 	userId: serial('user_id')
 		.notNull()
 		.references(() => profile.id, { onDelete: 'cascade' })

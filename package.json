@@ -47,6 +47,7 @@
 		"vite": "^6.0.0"
 	},
 	"dependencies": {
+		"@lucide/svelte": "^0.510.0",
 		"better-auth": "^1.2.4",
 		"dotenv": "^16.4.7",
 		"drizzle-orm": "^0.40.1",

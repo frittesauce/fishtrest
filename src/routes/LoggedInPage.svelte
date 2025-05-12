@@ -2,8 +2,6 @@
 	import Post from '../components/Post.svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import SideBar from '../components/SideBar.svelte';
-	import AppLayout from '../components/AppLayout.svelte';
 
 	let feed: [] = [];
 
@@ -19,10 +17,8 @@
 	});
 </script>
 
-<AppLayout>
-	<main class=" flex flex-wrap justify-between">
-		{#each feed as feedItem}
-			<Post post={feedItem}></Post>
-		{/each}
-	</main>
-</AppLayout>
+<main class=" flex w-full flex-col items-center">
+	{#each feed as feedItem}
+		<Post post={feedItem}></Post>
+	{/each}
+</main>

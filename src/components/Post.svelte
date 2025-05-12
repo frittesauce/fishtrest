@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { env } from '$env/dynamic/public';
+
 	let testImages = [
 		'https://i.pinimg.com/736x/c4/76/fe/c476fecc3440d3c1feb5a76162792c68.jpg',
 		'http://172.20.0.2:9000/avatars/31/medium.jpg'
@@ -30,11 +32,11 @@
 	} = $props();
 </script>
 
-<div class="flex flex-grow flex-col">
+<div class="flex w-fit flex-col items-center justify-center">
 	<img
-		src={post.image}
+		src={`${env.PUBLIC_CDN_URL}/fishtrest/${post.image}`}
 		alt="awseomse sauce"
-		class=" max-w-[160px] flex-1 rounded-md sm:max-h-[160px] sm:max-w-[160px] md:max-h-[260px] md:max-w-[260px] lg:max-h-[300px] lg:max-w-[300px] xl:max-h-[340px] xl:max-w-[340px]"
+		class=" max-h-[600px] w-max rounded-md"
 	/>
 	<h1
 		class=" text-2xl font-bold sm:max-w-[160px] md:max-w-[260px] lg:max-w-[300px] xl:max-w-[360px]"
