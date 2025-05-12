@@ -14,6 +14,7 @@ services:
       - .:/app
     depends_on:
       - minio
+      - postgres
     networks:
       - sveltekit-network
     env_file:
@@ -35,8 +36,22 @@ services:
     env_file:
       - .env
 
+  postgres:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password 
+      - POSTGRES_DB=mydatabase
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'  
+    networks:
+      - sveltekit-network
+    restart: always
 volumes:
   minio-data:
+  postgres-data:
 
 networks:
   sveltekit-network:

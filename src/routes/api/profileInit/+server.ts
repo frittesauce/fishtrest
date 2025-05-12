@@ -11,16 +11,14 @@ export const POST: RequestHandler = async ({ request }) => {
 		headers: request.headers
 	});
 
-	const bucket = 'avatars';
+	const bucket = 'fishtrest';
 	const formdata = await request.formData();
-	const file = formdata.get('image');
-	const username = formdata.get('username');
+	const file = formdata.get('image') as File;
+	const username = formdata.get('username') as string;
 
-	if (!(file instanceof File) && !(username instanceof String)) {
+	if (!(file instanceof File)) {
 		return json({ error: 'file not valid!' }, { status: 400 });
 	}
-
-	console.log(file);
 
 	if (session?.user.finishedOnboard || !session?.user) {
 		return json({ error: 'authentication error!' }, { status: 400 });
@@ -44,7 +42,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		await db.update(user).set({ finishedOnboard: true }).where(eq(user.id, newProfile.userId));
-		const objectName = `${newProfile.id}/medium.jpg`;
+		const objectName = `avatars/${newProfile.id}/medium.jpg`;
 		const buffer = Buffer.from(await file?.arrayBuffer());
 
 		const processedBuffer = await sharp(buffer)
