@@ -8,7 +8,7 @@
 </script>
 
 {#snippet BarButton(onclick: (event: Event) => Promise<void> | void, Icon: Component)}
-	<button class="h-16 w-16" {onclick}><Icon class="h-full w-full" /></button>
+	<button class="h-16 w-16 cursor-pointer" {onclick}><Icon class="h-full w-full" /></button>
 {/snippet}
 
 <div class=" fixed bottom-0 z-50 flex w-screen flex-col">

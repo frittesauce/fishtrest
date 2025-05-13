@@ -19,7 +19,9 @@
 </script>
 
 <main class=" flex w-full flex-col items-center pb-48">
-	{#each feed as feedItem}
-		<Post post={feedItem}></Post>
-	{/each}
+	<div class=" mx-8">
+		{#each feed as feedItem}
+			<Post post={feedItem}></Post>
+		{/each}
+	</div>
 </main>

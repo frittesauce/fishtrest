@@ -23,7 +23,7 @@ export const GET: RequestHandler = async ({ request }: { request: Request }) => 
 	}
 
 	const feed = await db
-		.select(postObject)
+		.select(postObject(profileId.id))
 		.from(post)
 		.leftJoin(profile, eq(profile.id, post.userId))
 		.orderBy(desc(post.createdAt))
