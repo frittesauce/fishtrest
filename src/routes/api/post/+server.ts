@@ -50,7 +50,7 @@ export const POST: RequestHandler = async ({ request }: { request: Request }) =>
 			.jpeg({ quality: 80 })
 			.toBuffer();
 
-		await minioClient.putObject('fishtrest', objectName, processedBuffer);
+		console.log(await minioClient.putObject('fishtrest', objectName, processedBuffer));
 		await db
 			.update(post)
 			.set({ image: `${objectName}` })

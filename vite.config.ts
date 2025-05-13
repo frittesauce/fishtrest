@@ -7,7 +7,7 @@ export default defineConfig({
 	plugins: [tailwindcss(), sveltekit()],
 	server: {
 		port: 3000,
-		host: '0.0.0.0'
+		host: 'localhost'
 	},
 	test: {
 		workspace: [
