@@ -45,9 +45,9 @@ export const POST: RequestHandler = async ({ request }: { request: Request }) =>
 
 		const objectName = `posts/${newPost.id}/medium.jpg`;
 		const buffer = Buffer.from(await image?.arrayBuffer());
-		const processedBuffer = await sharp(buffer)
+		const processedBuffer = await sharp(buffer, { animated: true })
 			.resize(800, 800, { fit: 'contain', position: 'center' })
-			.jpeg({ quality: 80 })
+			.webp({ loop: 0 })
 			.toBuffer();
 
 		console.log(await minioClient.putObject('fishtrest', objectName, processedBuffer));

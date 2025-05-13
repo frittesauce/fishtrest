@@ -1,10 +1,23 @@
 import { pgTable, text, timestamp, boolean, serial } from 'drizzle-orm/pg-core';
 
+export const like = pgTable('likes', {
+	userId: serial('user_id')
+		.notNull()
+		.references(() => profile.id, { onDelete: 'cascade' })
+		.unique(),
+	postId: serial('post_id')
+		.notNull()
+		.references(() => post.id, { onDelete: 'cascade' })
+		.unique(),
+	likedAt: timestamp('liked_at').defaultNow()
+});
+
 export const post = pgTable('posts', {
 	id: serial('id').primaryKey(),
 	title: text('title').notNull(),
 	description: text('description'),
 	image: text('image'),
+	createdAt: timestamp('created_at').defaultNow(),
 	userId: serial('user_id')
 		.notNull()
 		.references(() => profile.id, { onDelete: 'cascade' })

@@ -1,9 +1,10 @@
 <script lang="ts">
+	import type PostType from '@/types/post';
 	import Post from '../components/Post.svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
-	let feed: [] = [];
+	let feed: PostType[] = [];
 
 	onMount(async () => {
 		const response = await fetch('/api/feed');

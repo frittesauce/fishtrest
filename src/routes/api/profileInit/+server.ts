@@ -42,12 +42,12 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		await db.update(user).set({ finishedOnboard: true }).where(eq(user.id, newProfile.userId));
-		const objectName = `avatars/${newProfile.id}/medium.jpg`;
+		const objectName = `avatars/${newProfile.id}/medium.webp`;
 		const buffer = Buffer.from(await file?.arrayBuffer());
 
-		const processedBuffer = await sharp(buffer)
-			.resize(320, 320, { fit: 'cover', position: 'center' })
-			.jpeg({ quality: 80 })
+		const processedBuffer = await sharp(buffer, { animated: true })
+			.resize(320, 320, { fit: 'fill', position: 'center' })
+			.webp({ loop: 0 })
 			.toBuffer();
 
 		await minioClient.putObject(bucket, objectName, processedBuffer);

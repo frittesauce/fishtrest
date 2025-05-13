@@ -1,5 +1,5 @@
 {
-  "id": "35ae5813-8430-44b1-92bd-16229a00ec8a",
+  "id": "bcc08c8f-f40b-4c13-9e62-370a5e6c01ec",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -109,6 +109,80 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.likes": {
+      "name": "likes",
+      "schema": "",
+      "columns": {
+        "user_id": {
+          "name": "user_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "post_id": {
+          "name": "post_id",
+          "type": "serial",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "liked_at": {
+          "name": "liked_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "likes_user_id_profile_id_fk": {
+          "name": "likes_user_id_profile_id_fk",
+          "tableFrom": "likes",
+          "tableTo": "profile",
+          "columnsFrom": [
+            "user_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "likes_post_id_posts_id_fk": {
+          "name": "likes_post_id_posts_id_fk",
+          "tableFrom": "likes",
+          "tableTo": "posts",
+          "columnsFrom": [
+            "post_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "likes_user_id_unique": {
+          "name": "likes_user_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "user_id"
+          ]
+        },
+        "likes_post_id_unique": {
+          "name": "likes_post_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "post_id"
+          ]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.posts": {
       "name": "posts",
       "schema": "",
@@ -135,7 +209,14 @@
           "name": "image",
           "type": "text",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
         },
         "user_id": {
           "name": "user_id",

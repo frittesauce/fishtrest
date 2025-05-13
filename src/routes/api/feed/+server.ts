@@ -1,8 +1,9 @@
 import { auth } from '@/auth';
 import { db } from '@/db';
 import { post, profile } from '@/db/schema';
+import { postObject } from '@/types/post';
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 
 export const GET: RequestHandler = async ({ request }: { request: Request }) => {
 	const session = await auth.api.getSession({
@@ -22,19 +23,10 @@ export const GET: RequestHandler = async ({ request }: { request: Request }) => 
 	}
 
 	const feed = await db
-		.select({
-			id: post.id,
-			title: post.title,
-			description: post.description,
-			image: post.image,
-			user: {
-				id: profile.id,
-				handle: profile.handle,
-				avatarUrl: profile.avatarUrl
-			}
-		})
+		.select(postObject)
 		.from(post)
 		.leftJoin(profile, eq(profile.id, post.userId))
+		.orderBy(desc(post.createdAt))
 		.limit(20);
 
 	return json(feed);

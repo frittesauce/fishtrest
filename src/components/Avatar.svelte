@@ -1,5 +1,12 @@
 <script lang="ts">
-	let { src, alt } = $props();
+	import { env } from '$env/dynamic/public';
+	import { currentProfile } from '@/stores/profile';
+
+	let {
+		src = `${env.PUBLIC_CDN_URL}/${$currentProfile?.avatarUrl}`,
+		alt = 'alt text',
+		size = 16
+	} = $props();
 </script>
 
-<img {src} {alt} class="h-96 w-96 rounded-full" />
+<img {src} {alt} class="h-{size} w-{size} justify-center rounded-lg object-cover" />
