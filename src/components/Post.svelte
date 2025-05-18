@@ -4,7 +4,8 @@
 	import PostDescription from './PostStuff/PostDescription.svelte';
 	import { Heart, Trash2 } from '@lucide/svelte';
 	import { currentProfile } from '@/stores/profile';
-	import { feed } from '@/stores/feed';
+	import { mainFeed } from '@/stores/feed';
+	import { goto } from '$app/navigation';
 
 	let testImages = [
 		'https://i.pinimg.com/736x/c4/76/fe/c476fecc3440d3c1feb5a76162792c68.jpg',
@@ -20,7 +21,7 @@
 
 <div class="flex w-fit flex-col items-center justify-center">
 	<div class="flex w-full flex-row justify-between">
-		<p>sigma dude</p>
+		<a href={`/${post.user.handle}`}>{post.user.handle}</a>
 		{#if post.user.id == $currentProfile?.id}
 			<button
 				disabled={deleteButtonDisabled}
@@ -32,7 +33,7 @@
 							postId: post.id
 						})
 					});
-					feed.update((a) => {
+					mainFeed.update((a) => {
 						return a.filter((p) => p.id !== post.id);
 					});
 					deleteButtonDisabled = false;
@@ -63,12 +64,16 @@
 			<button
 				class="flex gap-x-2 font-bold"
 				onclick={async () => {
-					likeCnt = likedTs ? likeCnt - 1 : Number(likeCnt) + 1;
-					likedTs = !likedTs;
-					const response = await fetch('/api/like', {
-						method: 'POST',
-						body: JSON.stringify({ postId: post.id })
-					});
+					if ($currentProfile) {
+						likeCnt = likedTs ? likeCnt - 1 : Number(likeCnt) + 1;
+						likedTs = !likedTs;
+						await fetch('/api/like', {
+							method: 'POST',
+							body: JSON.stringify({ postId: post.id })
+						});
+					} else {
+						goto('/');
+					}
 				}}
 			>
 				<p>

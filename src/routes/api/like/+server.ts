@@ -26,6 +26,10 @@ export const POST: RequestHandler = async ({ request }: { request: Request }) =>
 		return json({ error: 'missing a post id!' }, { status: 400 });
 	}
 
+	if (!userProfile) {
+		return json({ error: 'you dont have a profile' }, { status: 400 });
+	}
+
 	try {
 		const [postExist] = await db.select().from(post).where(eq(post.id, postId)).limit(1);
 

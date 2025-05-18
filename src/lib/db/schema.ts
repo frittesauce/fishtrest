@@ -1,5 +1,19 @@
 import { pgTable, text, timestamp, boolean, serial, primaryKey } from 'drizzle-orm/pg-core';
 
+export const follower = pgTable(
+	'followers',
+	{
+		userId: serial('user_id')
+			.notNull()
+			.references(() => profile.id, { onDelete: 'cascade' }),
+		targetUserId: serial('target_user_id')
+			.notNull()
+			.references(() => profile.id, { onDelete: 'cascade' }),
+		followedAt: timestamp('followedAt').defaultNow()
+	},
+	(table) => [primaryKey({ columns: [table.targetUserId, table.userId], name: 'followers_pkey' })]
+);
+
 export const like = pgTable(
 	'likes',
 	{
@@ -11,11 +25,7 @@ export const like = pgTable(
 			.references(() => post.id, { onDelete: 'cascade' }),
 		likedAt: timestamp('liked_at').defaultNow()
 	},
-	(table) => {
-		return {
-			pk: primaryKey({ columns: [table.postId, table.userId], name: 'likes_pkey' })
-		};
-	}
+	(table) => [primaryKey({ columns: [table.postId, table.userId], name: 'likes_pkey' })]
 );
 
 export const post = pgTable('posts', {

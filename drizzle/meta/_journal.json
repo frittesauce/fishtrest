@@ -15,6 +15,20 @@
       "when": 1747135496767,
       "tag": "0001_remarkable_eddie_brock",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1747574013153,
+      "tag": "0002_broken_tempest",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1747574945073,
+      "tag": "0003_stormy_medusa",
+      "breakpoints": true
     }
   ]
 }

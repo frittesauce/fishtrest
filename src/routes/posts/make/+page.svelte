@@ -2,9 +2,6 @@
 	import { currentProfile } from '@/stores/profile';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
-	import { feed } from '@/stores/feed';
-	import Post from '../../../components/Post.svelte';
-	import type PostType from '@/types/post';
 
 	let image = $state('/default.png');
 	let fileInput: Blob = $state(new Blob());
@@ -48,10 +45,15 @@
 		});
 
 		if (res.ok) {
+			toast.success('post has been posted!');
 			goto('/');
 		}
 
 		loadingPost = false;
+	}
+
+	if (!$currentProfile) {
+		goto('/');
 	}
 </script>
 
@@ -84,6 +86,4 @@
 			</form>
 		</div>
 	</div>
-{:else}
-	<p>login</p>
-{/if}
+{:else}{/if}

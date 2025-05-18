@@ -1,0 +1,1 @@
+ALTER TABLE "followers" RENAME COLUMN "liked_at" TO "followedAt";

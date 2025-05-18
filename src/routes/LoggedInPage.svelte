@@ -1,25 +1,41 @@
 <script lang="ts">
-	import type PostType from '@/types/post';
 	import Post from '../components/Post.svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-	import { feed } from '@/stores/feed';
+	import { activeFeed, mainFeed } from '@/stores/feed';
 
-	onMount(async () => {
-		const response = await fetch('/api/feed');
+	async function loadPosts() {
+		const response = await fetch(`/api/feed?type=${$activeFeed}`);
 
 		if (!response.ok) {
 			return toast.error('failed to fetch feed, try again later!');
 		}
 
-		feed.set(await response.json());
-		console.log($feed);
+		mainFeed.set(await response.json());
+	}
+
+	onMount(async () => {
+		loadPosts();
 	});
 </script>
 
 <main class=" flex w-full flex-col items-center pb-48">
+	<div class="flex flex-row">
+		<button
+			onclick={() => {
+				activeFeed.set('main');
+				loadPosts();
+			}}>main</button
+		>
+		<button
+			onclick={() => {
+				activeFeed.set('following');
+				loadPosts();
+			}}>following</button
+		>
+	</div>
 	<div class=" mx-8">
-		{#each $feed as feedItem}
+		{#each $mainFeed as feedItem}
 			<Post post={feedItem}></Post>
 			<hr />
 		{/each}
