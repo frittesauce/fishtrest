@@ -3,8 +3,7 @@
 	import Post from '../components/Post.svelte';
 	import { onMount } from 'svelte';
 	import { toast } from 'svelte-sonner';
-
-	let feed: PostType[] = [];
+	import { feed } from '@/stores/feed';
 
 	onMount(async () => {
 		const response = await fetch('/api/feed');
@@ -13,15 +12,16 @@
 			return toast.error('failed to fetch feed, try again later!');
 		}
 
-		feed = await response.json();
-		console.log(feed);
+		feed.set(await response.json());
+		console.log($feed);
 	});
 </script>
 
 <main class=" flex w-full flex-col items-center pb-48">
 	<div class=" mx-8">
-		{#each feed as feedItem}
+		{#each $feed as feedItem}
 			<Post post={feedItem}></Post>
+			<hr />
 		{/each}
 	</div>
 </main>

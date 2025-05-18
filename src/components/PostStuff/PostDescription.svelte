@@ -16,7 +16,7 @@
 		{:else if tagRegex.test(part)}
 			<button
 				onclick={() => {
-					goto(`/${part.slice(1)}`);
+					goto(`/@${part.slice(1)}`);
 				}}
 				class=" font-semibold text-indigo-800">@{part.slice(1)}</button
 			>

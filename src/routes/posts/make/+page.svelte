@@ -2,6 +2,9 @@
 	import { currentProfile } from '@/stores/profile';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
+	import { feed } from '@/stores/feed';
+	import Post from '../../../components/Post.svelte';
+	import type PostType from '@/types/post';
 
 	let image = $state('/default.png');
 	let fileInput: Blob = $state(new Blob());
@@ -44,9 +47,11 @@
 			body: formdata
 		});
 
-		loadingPost = true;
+		if (res.ok) {
+			goto('/');
+		}
 
-		goto('/');
+		loadingPost = false;
 	}
 </script>
 

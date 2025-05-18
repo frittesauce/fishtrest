@@ -51,12 +51,13 @@ export const POST: RequestHandler = async ({ request }: { request: Request }) =>
 			.toBuffer();
 
 		console.log(await minioClient.putObject('fishtrest', objectName, processedBuffer));
-		await db
+		const [finalPost] = await db
 			.update(post)
 			.set({ image: `${objectName}` })
-			.where(eq(post.id, newPost.id));
+			.where(eq(post.id, newPost.id))
+			.returning();
 
-		return json({ message: 'updated!' });
+		return json(finalPost, { status: 200 });
 	} catch (error) {
 		return json({ message: error });
 	}

@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 
 export type Profile = {
-	id: string;
+	id: number;
 	handle: string;
 	avatarUrl: string;
 	bio: string;

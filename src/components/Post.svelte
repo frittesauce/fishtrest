@@ -2,7 +2,9 @@
 	import { env } from '$env/dynamic/public';
 	import type PostType from '@/types/post';
 	import PostDescription from './PostStuff/PostDescription.svelte';
-	import { Heart } from '@lucide/svelte';
+	import { Heart, Trash2 } from '@lucide/svelte';
+	import { currentProfile } from '@/stores/profile';
+	import { feed } from '@/stores/feed';
 
 	let testImages = [
 		'https://i.pinimg.com/736x/c4/76/fe/c476fecc3440d3c1feb5a76162792c68.jpg',
@@ -12,9 +14,39 @@
 
 	let likedTs = $state(post.likedByUser);
 	let likeCnt: number = $state(post.likeCount);
+
+	let deleteButtonDisabled = $state(false);
 </script>
 
 <div class="flex w-fit flex-col items-center justify-center">
+	<div class="flex w-full flex-row justify-between">
+		<p>sigma dude</p>
+		{#if post.user.id == $currentProfile?.id}
+			<button
+				disabled={deleteButtonDisabled}
+				onclick={async () => {
+					deleteButtonDisabled = true;
+					await fetch('/api/deletePost', {
+						method: 'DELETE',
+						body: JSON.stringify({
+							postId: post.id
+						})
+					});
+					feed.update((a) => {
+						return a.filter((p) => p.id !== post.id);
+					});
+					deleteButtonDisabled = false;
+				}}
+			>
+				<Trash2
+					strokeWidth={2}
+					class={`${deleteButtonDisabled ? '' : 'cursor-pointer hover:text-red-600'}`}
+				></Trash2>
+			</button>
+		{:else}
+			<span></span>
+		{/if}
+	</div>
 	<img
 		src={`${env.PUBLIC_CDN_URL}/${post.image}`}
 		alt="awseomse sauce"
@@ -30,9 +62,13 @@
 			</h1>
 			<button
 				class="flex gap-x-2 font-bold"
-				onclick={() => {
+				onclick={async () => {
 					likeCnt = likedTs ? likeCnt - 1 : Number(likeCnt) + 1;
 					likedTs = !likedTs;
+					const response = await fetch('/api/like', {
+						method: 'POST',
+						body: JSON.stringify({ postId: post.id })
+					});
 				}}
 			>
 				<p>

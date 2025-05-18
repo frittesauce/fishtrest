@@ -35,7 +35,9 @@
 				});
 			}, LogOut)}
 
-			{@render BarButton(() => {}, Avatar)}
+			{@render BarButton(() => {
+				goto(`/${$currentProfile.handle}`);
+			}, Avatar)}
 		{:else}
 			<button
 				onclick={() => {
