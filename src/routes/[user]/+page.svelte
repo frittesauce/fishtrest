@@ -90,7 +90,7 @@
 		{/if}
 	</div>
 	<div>
-		{#each posts as post}
+		{#each posts as post (post.id)}
 			<Post {post}></Post>
 			<hr />
 		{/each}

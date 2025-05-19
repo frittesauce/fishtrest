@@ -6,12 +6,9 @@
 	import { currentProfile } from '@/stores/profile';
 	import { mainFeed } from '@/stores/feed';
 	import { goto } from '$app/navigation';
+	import { combinedRegex, hashtagRegex, tagRegex } from '@/utils';
 
-	let testImages = [
-		'https://i.pinimg.com/736x/c4/76/fe/c476fecc3440d3c1feb5a76162792c68.jpg',
-		'http://172.20.0.2:9000/avatars/31/medium.jpg'
-	];
-	let { post }: { post: PostType } = $props();
+	let { post, postPage }: { post: PostType; postPage?: boolean } = $props();
 
 	let likedTs = $state(post.likedByUser);
 	let likeCnt: number = $state(post.likeCount);
@@ -48,12 +45,18 @@
 			<span></span>
 		{/if}
 	</div>
-	<img
-		src={`${env.PUBLIC_CDN_URL}/${post.image}`}
-		alt="awseomse sauce"
-		class=" max-h-[600px] w-full rounded-md"
-		loading="lazy"
-	/>
+	<button
+		disabled={postPage}
+		onclick={() => {
+			goto(`/posts/${post.id}`);
+		}}
+		><img
+			src={`${env.PUBLIC_CDN_URL}/${post.image}`}
+			alt="awseomse sauce"
+			class={` max-h-[600px] w-full ${postPage ? '' : 'cursor-pointer'} rounded-md`}
+			loading="lazy"
+		/>
+	</button>
 	<div class=" flex w-full flex-col">
 		<div class="flex w-full flex-row justify-between">
 			<h1

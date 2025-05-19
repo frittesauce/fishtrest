@@ -1,7 +1,8 @@
 import { env } from '$env/dynamic/public';
 import type { PageServerLoad } from '../$types';
 
-export const load: PageServerLoad = async ({ params }) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const load: PageServerLoad = async ({ params }: { params: any }) => {
 	const response = await fetch(`${env.PUBLIC_BASE_URL}/api/profile?username=${params.user}`);
 
 	if (response.ok) {

@@ -35,7 +35,7 @@
 		>
 	</div>
 	<div class=" mx-8">
-		{#each $mainFeed as feedItem}
+		{#each $mainFeed as feedItem (feedItem.id)}
 			<Post post={feedItem}></Post>
 			<hr />
 		{/each}

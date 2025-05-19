@@ -39,7 +39,7 @@
 		formdata.append('desc', desc);
 		formdata.append('image', fileInput);
 
-		const res = await fetch('/api/post', {
+		const res = await fetch('/api/makePost', {
 			method: 'POST',
 			body: formdata
 		});
