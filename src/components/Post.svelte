@@ -8,7 +8,22 @@
 	import { goto } from '$app/navigation';
 	import { combinedRegex, hashtagRegex, tagRegex } from '@/utils';
 
-	let { post, postPage }: { post: PostType; postPage?: boolean } = $props();
+	let {
+		post = {
+			id: 0,
+			title: 'no posts found',
+			description: 'post couldnt be found try another query',
+			image: 'fallback',
+			likedByUser: false,
+			likeCount: 0,
+			user: {
+				id: 0,
+				handle: '@404',
+				avatarUrl: 'fallback'
+			}
+		},
+		postPage
+	}: { post?: PostType; postPage?: boolean } = $props();
 
 	let likedTs = $state(post.likedByUser);
 	let likeCnt: number = $state(post.likeCount);

@@ -19,15 +19,17 @@
 	});
 </script>
 
-<main class=" flex w-full flex-col items-center pb-48">
-	<div class="flex flex-row">
+<main class=" flex w-full flex-col items-center pb-24 md:pt-24 md:pb-0">
+	<div class=" flex flex-row justify-between gap-x-64 text-3xl">
 		<button
+			class={` cursor-pointer ${$activeFeed == 'main' ? 'text-indigo-500' : 'text-black'}`}
 			onclick={() => {
 				activeFeed.set('main');
 				loadPosts();
 			}}>main</button
 		>
 		<button
+			class={` cursor-pointer ${$activeFeed == 'following' ? 'text-indigo-500' : 'text-black'}`}
 			onclick={() => {
 				activeFeed.set('following');
 				loadPosts();

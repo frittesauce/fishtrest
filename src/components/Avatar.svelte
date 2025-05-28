@@ -5,7 +5,7 @@
 	let {
 		src = `${env.PUBLIC_CDN_URL}/${$currentProfile?.avatarUrl}`,
 		alt = 'alt text',
-		size = 16
+		size = 12
 	} = $props();
 </script>
 
