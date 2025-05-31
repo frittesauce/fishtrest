@@ -8,6 +8,10 @@ import { desc, eq, ilike, or } from 'drizzle-orm';
 export const GET: RequestHandler = async ({ request, url }: { request: Request; url: URL }) => {
 	const query = await url.searchParams.get('query');
 
+	if(!query) {
+		return json({error: "no query provided?"}, {status: 500})
+	}
+
 	const session = await auth.api.getSession({
 		headers: request.headers
 	});
