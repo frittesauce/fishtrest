@@ -6,6 +6,7 @@
 	import Post from '../../components/Post.svelte';
 	import { currentProfile } from '@/stores/profile';
 	import { afterNavigate, goto } from '$app/navigation';
+	import { authClient } from '@/auth-client';
 
 	let { data } = $props<{
 		profile: {
@@ -59,35 +60,44 @@
 	});
 </script>
 
-<div class="flex flex-row">
-	<div>
+<div class="flex flex-col w-screen items-center">
+	<div class="flex">
 		<img
 			src={`${env.PUBLIC_CDN_URL}/${data.profile.avatarUrl}`}
 			alt={`profile image of ${data.profile.handle}`}
 		/>
-		<h1>{data.profile.handle}</h1>
-		<p>
-			{data.profile.bio}
-		</p>
-		<div class="flex flex-row">
-			<p>followers: {followers} ,</p>
-			<p>following: {data.profile.following}</p>
-		</div>
-		{#if data.profile.id != $currentProfile?.id}
-			<button
-				onclick={async () => {
-					if (!$currentProfile) goto('/');
-					followers = following ? followers - 1 : Number(followers) + 1;
-					following = !following;
-					await fetch('/api/follow', {
-						method: 'POST',
-						body: JSON.stringify({ targetHandle: data.profile.handle })
-					});
-				}}
-			>
-				{following ? 'unfollow' : 'follow'}
+		<div>
+			<h1>{data.profile.handle}</h1>
+			<p>
+				{data.profile.bio}
+			</p>
+			<div class="flex flex-row">
+				<p>followers: {followers} ,</p>
+				<p>following: {data.profile.following}</p>
+			</div>
+			{#if data.profile.id != $currentProfile?.id}
+				<button
+					onclick={async () => {
+						if (!$currentProfile) goto('/');
+						followers = following ? followers - 1 : Number(followers) + 1;
+						following = !following;
+						await fetch('/api/follow', {
+							method: 'POST',
+							body: JSON.stringify({ targetHandle: data.profile.handle })
+						});
+					}}
+				>
+					{following ? 'unfollow' : 'follow'}
+				</button>
+			{:else}
+			<button onclick={() => {
+				authClient.signOut()
+			}}>
+				logout
 			</button>
-		{/if}
+			{/if}
+		</div>
+
 	</div>
 	<div>
 		{#each posts as post (post.id)}
