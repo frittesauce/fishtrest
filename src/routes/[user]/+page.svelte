@@ -101,7 +101,9 @@
 	</div>
 	<div>
 		{#each posts as post (post.id)}
-			<Post {post}></Post>
+			<Post {post} onDeleteSucess={() => {
+				goto(`/${post.user.handle}`)
+			}}></Post>
 			<hr />
 		{/each}
 	</div>

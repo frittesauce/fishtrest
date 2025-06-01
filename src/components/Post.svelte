@@ -22,8 +22,13 @@
 				avatarUrl: 'fallback'
 			}
 		},
-		postPage
-	}: { post?: PostType; postPage?: boolean } = $props();
+		postPage,
+		onDeleteSucess = () => {
+			mainFeed.update((a) => {
+				return a.filter((p) => p.id !== post.id);
+			});
+		}
+	}: { post?: PostType; postPage?: boolean; onDeleteSucess?: Function } = $props();
 
 	let likedTs = $state(post.likedByUser);
 	let likeCnt: number = $state(post.likeCount);
@@ -45,9 +50,7 @@
 							postId: post.id
 						})
 					});
-					mainFeed.update((a) => {
-						return a.filter((p) => p.id !== post.id);
-					});
+					onDeleteSucess()
 					deleteButtonDisabled = false;
 				}}
 			>
