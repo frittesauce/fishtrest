@@ -19,7 +19,7 @@
 	});
 </script>
 
-<main class=" flex w-full flex-col items-center pb-24 md:pt-24 md:pb-0">
+<main class=" flex w-full flex-col items-center pb-24 md:pb-0">
 	<div class=" flex flex-row justify-between text-3xl">
 		<button
 			class={` cursor-pointer ${$activeFeed == 'main' ? 'text-indigo-500' : 'text-black'} m-4`}
@@ -36,7 +36,7 @@
 			}}>following</button
 		>
 	</div>
-	<div class=" mx-8 gap-y-8 flex flex-col">
+	<div class=" mx-8 flex flex-col gap-y-8">
 		{#each $mainFeed as feedItem (feedItem.id)}
 			<Post post={feedItem}></Post>
 		{/each}

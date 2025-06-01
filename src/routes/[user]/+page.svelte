@@ -7,7 +7,7 @@
 	import { currentProfile } from '@/stores/profile';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { authClient } from '@/auth-client';
-	import { LogOut } from '@lucide/svelte';
+	import { LogOut, Pencil } from '@lucide/svelte';
 
 	let { data } = $props<{
 		profile: {
@@ -20,9 +20,12 @@
 		};
 	}>();
 
+	let editing = $state(false);
 	let posts: PostType[] = $state([]);
 	let following = $state();
 	let followers = $state(data.profile.followers);
+
+	let updateProfile = $state({ bio: data.profile.bio, loading: false });
 
 	async function loadUserPosts() {
 		const response = await fetch(`/api/feed?type=profile&handle=${data.profile.handle}`);
@@ -72,46 +75,61 @@
 			<div>
 				<h1 class=" text-3xl font-semibold">{data.profile.handle}</h1>
 				<hr class="my-3 w-full" />
-				<p class=" text-lg">
-					{data.profile.bio}
-				</p>
+				{#if editing}
+					<input class=" rounded-md border p-1 text-lg shadow" bind:value={updateProfile.bio} />
+				{:else}
+					<p class=" text-lg">
+						{data.profile.bio}
+					</p>
+				{/if}
 			</div>
 			<div class="flex flex-col">
 				<p>followers: {followers}</p>
 				<p>following: {data.profile.following}</p>
 			</div>
-			{#if data.profile.id != $currentProfile?.id}
-				<button
-					onclick={async () => {
-						if (!$currentProfile) goto('/');
-						followers = following ? followers - 1 : Number(followers) + 1;
-						following = !following;
-						await fetch('/api/follow', {
-							method: 'POST',
-							body: JSON.stringify({ targetHandle: data.profile.handle })
-						});
-					}}
-					class=" flex cursor-pointer flex-row items-center gap-x-2 rounded-md border-4 border-indigo-900 bg-indigo-400 p-2 align-middle text-xl font-bold text-white shadow shadow-indigo-800"
-				>
-					{following ? 'unfollow' : 'follow'}
-				</button>
-			{:else}
-				<button
-					onclick={() => {
-						authClient.signOut({
-							fetchOptions: {
-								onSuccess: () => {
-									goto('/', { invalidateAll: true });
+			<div class="flex">
+				{#if data.profile.id != $currentProfile?.id}
+					<button
+						onclick={async () => {
+							if (!$currentProfile) goto('/');
+							followers = following ? followers - 1 : Number(followers) + 1;
+							following = !following;
+							await fetch('/api/follow', {
+								method: 'POST',
+								body: JSON.stringify({ targetHandle: data.profile.handle })
+							});
+						}}
+						class=" flex cursor-pointer flex-row items-center gap-x-2 rounded-md border-4 border-indigo-900 bg-indigo-400 p-2 align-middle text-xl font-bold text-white shadow shadow-indigo-800"
+					>
+						{following ? 'unfollow' : 'follow'}
+					</button>
+				{:else}
+					<button
+						onclick={() => {
+							editing = !editing;
+						}}
+						class=" flex w-[100px] cursor-pointer flex-row items-center gap-x-2 rounded-md border-4 border-indigo-900 bg-indigo-400 p-2 align-middle text-xl font-bold text-white shadow shadow-indigo-800"
+					>
+						<Pencil></Pencil>
+						{updateProfile.loading ? 'loading...' : !editing ? 'edit' : 'save'}
+					</button>
+					<button
+						onclick={() => {
+							authClient.signOut({
+								fetchOptions: {
+									onSuccess: () => {
+										goto('/', { invalidateAll: true });
+									}
 								}
-							}
-						});
-					}}
-					class=" flex cursor-pointer flex-row items-center gap-x-2 rounded-md border-4 border-red-900 bg-red-400 p-2 align-middle text-xl font-bold text-white shadow shadow-red-800"
-				>
-					<LogOut />
-					logout
-				</button>
-			{/if}
+							});
+						}}
+						class=" flex cursor-pointer flex-row items-center gap-x-2 rounded-md border-4 border-red-900 bg-red-400 p-2 align-middle text-xl font-bold text-white shadow shadow-red-800"
+					>
+						<LogOut />
+						logout
+					</button>
+				{/if}
+			</div>
 		</div>
 	</div>
 

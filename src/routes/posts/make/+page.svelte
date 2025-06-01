@@ -2,6 +2,7 @@
 	import { currentProfile } from '@/stores/profile';
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
+	import Avatar from '../../../components/Avatar.svelte';
 
 	let image = $state('/default.png');
 	let fileInput: Blob = $state(new Blob());
@@ -29,6 +30,11 @@
 		e.preventDefault();
 		loadingPost = true;
 
+		if (!$currentProfile) {
+			loadingPost = false;
+			return toast.error('youre not logged in please login');
+		}
+
 		if (fileInput.size <= 0) {
 			loadingPost = false;
 			return toast.error('upload an image');
@@ -51,39 +57,60 @@
 
 		loadingPost = false;
 	}
-
-	if (!$currentProfile) {
-		goto('/');
-	}
 </script>
 
-{#if $currentProfile}
-	<div class="flex flex-col lg:flex-row">
-		<div class="max-w-[600px] min-w-[600px] flex-grow">
-			<button
-				onclick={() => {
-					handleImageUpload();
-				}}
-			>
-				<img
-					src={image}
-					alt="cool"
-					class="flex max-w-[600px] min-w-[600px] flex-grow cursor-pointer rounded-lg"
-				/>
-			</button>
+<main class="flex h-screen w-screen items-center justify-center align-middle">
+	<div class="flex w-fit flex-col items-center justify-center rounded-xl bg-gray-300 p-8 shadow">
+		<div class="mb-2 flex w-full flex-row justify-between">
+			<div class="flex items-center rounded-md bg-gray-400 p-2 align-middle shadow">
+				<Avatar />
+				<h1 class="ml-2 text-2xl font-semibold">
+					{$currentProfile?.handle ? $currentProfile?.handle : '@login'}
+				</h1>
+			</div>
 		</div>
-		<div class=" min-w-[600px]">
-			<form class="flex flex-col gap-y-4" onsubmit={handleForm}>
-				<p class=" text-2xl font-semibold">title:</p>
-				<input class="w-96 border" required name="title" bind:value={title} />
-				<p class=" text-2xl font-semibold">description:</p>
-				<input class="w-96 border" required name="desc" bind:value={desc} />
-				<button
-					disabled={loadingPost}
-					class=" w-48 rounded-md bg-indigo-800 p-2 text-2xl text-white"
-					type="submit">{!loadingPost ? 'post!' : 'loading...'}</button
-				>
-			</form>
+
+		<button
+			onclick={() => {
+				handleImageUpload();
+			}}
+		>
+			<img
+				src={image}
+				alt="cool"
+				class={` max-h-[600px] w-full cursor-pointer rounded-md shadow`}
+			/>
+		</button>
+		<div class=" flex w-full flex-col">
+			<div class="flex w-full flex-row items-center justify-between">
+				<form class="flex w-full flex-row justify-between gap-y-4" onsubmit={handleForm}>
+					<div class="flex flex-col">
+						<p>title:</p>
+						<input
+							class=" text-2xl font-bold sm:max-w-[160px] md:max-w-[260px] lg:max-w-[300px] xl:max-w-[360px]"
+							placeholder="cats are interesting"
+							required
+							name="title"
+							bind:value={title}
+						/>
+						<p>description:</p>
+						<input
+							class=" text-lg sm:max-w-[160px] md:max-w-[260px] lg:max-w-[300px] xl:max-w-[360px]"
+							placeholder="just think about it"
+							required
+							name="desc"
+							bind:value={desc}
+						/>
+					</div>
+					<div class="flex items-center gap-x-2 font-bold">
+						<button
+							disabled={loadingPost}
+							class=" w-24 rounded-md bg-indigo-800 p-2 text-2xl text-white"
+							type="submit">{!loadingPost ? 'post!' : 'loading...'}</button
+						>
+					</div>
+				</form>
+			</div>
 		</div>
 	</div>
-{:else}{/if}
+</main>

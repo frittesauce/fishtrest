@@ -3,7 +3,9 @@
 	import { currentProfile } from '@/stores/profile';
 
 	let {
-		src = `${env.PUBLIC_CDN_URL}/${$currentProfile?.avatarUrl}`,
+		src = $currentProfile
+			? `${env.PUBLIC_CDN_URL}/${$currentProfile?.avatarUrl}`
+			: `${env.PUBLIC_CDN_URL}/404.webp`,
 		alt = 'alt text',
 		size = 12
 	} = $props();
