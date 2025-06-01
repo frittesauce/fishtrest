@@ -7,6 +7,7 @@
 	import { currentProfile } from '@/stores/profile';
 	import { afterNavigate, goto } from '$app/navigation';
 	import { authClient } from '@/auth-client';
+	import { LogOut } from '@lucide/svelte';
 
 	let { data } = $props<{
 		profile: {
@@ -61,18 +62,22 @@
 </script>
 
 <div class="flex w-screen flex-col items-center">
-	<div class="flex">
+	<div class="my-8 flex flex-col rounded bg-gray-300 p-8 shadow md:flex-row">
 		<img
 			src={`${env.PUBLIC_CDN_URL}/${data.profile.avatarUrl}`}
 			alt={`profile image of ${data.profile.handle}`}
+			class=" mr-6 w-auto rounded-lg"
 		/>
-		<div>
-			<h1>{data.profile.handle}</h1>
-			<p>
-				{data.profile.bio}
-			</p>
-			<div class="flex flex-row">
-				<p>followers: {followers} ,</p>
+		<div class="flex flex-col justify-between">
+			<div>
+				<h1 class=" text-3xl font-semibold">{data.profile.handle}</h1>
+				<hr class="my-3 w-full" />
+				<p class=" text-lg">
+					{data.profile.bio}
+				</p>
+			</div>
+			<div class="flex flex-col">
+				<p>followers: {followers}</p>
 				<p>following: {data.profile.following}</p>
 			</div>
 			{#if data.profile.id != $currentProfile?.id}
@@ -86,15 +91,24 @@
 							body: JSON.stringify({ targetHandle: data.profile.handle })
 						});
 					}}
+					class=" flex cursor-pointer flex-row items-center gap-x-2 rounded-md border-4 border-indigo-900 bg-indigo-400 p-2 align-middle text-xl font-bold text-white shadow shadow-indigo-800"
 				>
 					{following ? 'unfollow' : 'follow'}
 				</button>
 			{:else}
 				<button
 					onclick={() => {
-						authClient.signOut();
+						authClient.signOut({
+							fetchOptions: {
+								onSuccess: () => {
+									goto('/', { invalidateAll: true });
+								}
+							}
+						});
 					}}
+					class=" flex cursor-pointer flex-row items-center gap-x-2 rounded-md border-4 border-red-900 bg-red-400 p-2 align-middle text-xl font-bold text-white shadow shadow-red-800"
 				>
+					<LogOut />
 					logout
 				</button>
 			{/if}
