@@ -105,13 +105,28 @@
 					</button>
 				{:else}
 					<button
-						onclick={() => {
-							editing = !editing;
+						onclick={async () => {
+							console.log(editing);
+							if (editing) {
+								const formdata = new FormData();
+								formdata.append('bio', updateProfile.bio);
+								const response = await fetch('/api/profile', {
+									body: formdata,
+									method: 'PATCH'
+								});
+								if (response.ok) {
+									editing = false;
+									data.profile.bio = updateProfile.bio;
+								}
+							} else {
+								editing = true;
+								console.log('skibidi');
+							}
 						}}
 						class=" flex w-[100px] cursor-pointer flex-row items-center gap-x-2 rounded-md border-4 border-indigo-900 bg-indigo-400 p-2 align-middle text-xl font-bold text-white shadow shadow-indigo-800"
 					>
 						<Pencil></Pencil>
-						{updateProfile.loading ? 'loading...' : !editing ? 'edit' : 'save'}
+						{updateProfile.loading ? 'loading...' : editing ? 'save' : 'edit'}
 					</button>
 					<button
 						onclick={() => {
