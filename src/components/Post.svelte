@@ -15,13 +15,13 @@
 			id: 0,
 			title: 'no posts found',
 			description: 'post couldnt be found try another query',
-			image: 'fallback',
+			image: '404.webp',
 			likedByUser: false,
 			likeCount: 0,
 			user: {
 				id: 0,
 				handle: '@404',
-				avatarUrl: 'fallback'
+				avatarUrl: '404.webp'
 			}
 		},
 		postPage,

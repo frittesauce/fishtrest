@@ -25,7 +25,7 @@ export const GET: RequestHandler = async ({ request, url }: { request: Request; 
 	}
 
 	try {
-		const feed = await db
+		const postResult = await db
 			.select(postObject(profileId ? profileId.id : 0))
 			.from(post)
 			.leftJoin(profile, eq(profile.id, post.userId))
@@ -36,8 +36,24 @@ export const GET: RequestHandler = async ({ request, url }: { request: Request; 
 				desc(post.createdAt)
 			)
 			.limit(20);
+		
+		const userResult = await db
+			.select({
+			id: profile.id,
+			handle: profile.handle,
+			avatarUrl: profile.avatarUrl,})
+			.from(profile)
+			.where(ilike(profile.handle, `%${query}%`))
+			.orderBy(
+				desc(ilike(profile.handle, `%${query}%`)),
+			)
+			.limit(4);
+		const result = {
+			posts: postResult,
+			users: userResult
+		}
 
-		return json(feed);
+		return json(result);
 	} catch (error) {
 		console.log(error);
 		return json({ error: 'something went wrong sorry' }, { status: 400 });

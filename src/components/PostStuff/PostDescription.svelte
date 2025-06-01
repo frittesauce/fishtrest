@@ -10,8 +10,9 @@
 <div>
 	{#each parts as part}
 		{#if hashtagRegex.test(part)}
-			<a href={`/search?prompt=${part.slice(1)}`} class="font-semibold text-indigo-800"
-				>#{part.slice(1)}</a
+			<a
+				href={`/search?prompt=${encodeURIComponent('#' + part.slice(1))}`}
+				class="font-semibold text-indigo-800">#{part.slice(1)}</a
 			>
 		{:else if tagRegex.test(part)}
 			<button
