@@ -60,7 +60,7 @@
 	});
 </script>
 
-<div class="flex flex-col w-screen items-center">
+<div class="flex w-screen flex-col items-center">
 	<div class="flex">
 		<img
 			src={`${env.PUBLIC_CDN_URL}/${data.profile.avatarUrl}`}
@@ -90,21 +90,25 @@
 					{following ? 'unfollow' : 'follow'}
 				</button>
 			{:else}
-			<button onclick={() => {
-				authClient.signOut()
-			}}>
-				logout
-			</button>
+				<button
+					onclick={() => {
+						authClient.signOut();
+					}}
+				>
+					logout
+				</button>
 			{/if}
 		</div>
-
 	</div>
-	<div>
+
+	<div class=" mx-8 flex flex-col gap-y-8">
 		{#each posts as post (post.id)}
-			<Post {post} onDeleteSucess={() => {
-				goto(`/${post.user.handle}`)
-			}}></Post>
-			<hr />
+			<Post
+				{post}
+				onDeleteSucess={() => {
+					goto(`/${post.user.handle}`);
+				}}
+			></Post>
 		{/each}
 	</div>
 </div>

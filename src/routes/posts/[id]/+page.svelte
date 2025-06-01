@@ -10,7 +10,7 @@
 	let post = $state(data.post);
 </script>
 
-<main class="flex w-full justify-center">
+<main class="flex h-screen w-screen items-center justify-center align-middle">
 	<Post
 		{post}
 		onDeleteSucess={() => {
