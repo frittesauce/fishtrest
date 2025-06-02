@@ -1,6 +1,6 @@
 import { authClient } from '@/auth-client';
 import { exDb } from '@/db';
-import { profile, user } from '@/db/schema';
+import { post, profile, user } from '@/db/schema';
 import { exMinioClient } from '@/server/externalMinio';
 import { faker } from '@faker-js/faker';
 import { eq } from 'drizzle-orm';
@@ -69,8 +69,37 @@ async function seed(userNum: number = 1, postPerUser: number = 1) {
 
 		await exDb.update(profile).set({ avatarUrl: objectName }).where(eq(profile.id, newProfile.id));
 
-		for (let i = 0; i < postPerUser; i++) {}
+		for (let i = 0; i < postPerUser; i++) {
+			const title = faker.book.title();
+			const description = faker.animal.cat();
+
+			const [newPost] = await exDb
+				.insert(post)
+				.values({
+					userId: newProfile.id,
+					title: title,
+					description: description
+				})
+				.returning();
+
+			const objectName = `posts/${newPost.id}/medium.jpg`;
+
+			const { buffer } = randomCatImage();
+
+			const processedBuffer = await sharp(buffer, { animated: true })
+				.resize(800, 800, { fit: 'contain', position: 'center' })
+				.webp({ loop: 0 })
+				.toBuffer();
+
+			await exMinioClient.putObject('fishtrest', objectName, processedBuffer);
+
+			const [finalPost] = await exDb
+				.update(post)
+				.set({ image: `${objectName}` })
+				.where(eq(post.id, newPost.id))
+				.returning();
+		}
 	}
 }
 
-seed(1);
+seed(10, 4);
