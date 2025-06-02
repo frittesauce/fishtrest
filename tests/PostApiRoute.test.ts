@@ -19,5 +19,5 @@ test('return a post if post exists', async ({ request }) => {
 	const response = await request.get(`${apiUrl}?id=${existingPostId}`);
 
 	expect(response.ok()).toBeTruthy();
-	expect(await response.json()).toHaveProperty('id', existingPostId );
+	expect(await response.json()).toHaveProperty('id', existingPostId);
 });

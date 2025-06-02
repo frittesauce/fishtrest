@@ -55,15 +55,18 @@ export const PATCH: RequestHandler = async ({ request }: { request: Request }) =
 		.where(eq(profile.userId, session.user.id))
 		.limit(1);
 
-
 	if (!bio) {
 		return json({ error: 'nothing to update' }, { status: 400 });
 	}
 	try {
-		const [newProfile] = await db.update(profile).set({bio}).where(eq(profile.id, userProfile.id)).returning()
+		const [newProfile] = await db
+			.update(profile)
+			.set({ bio })
+			.where(eq(profile.id, userProfile.id))
+			.returning();
 
-		return json(newProfile)
+		return json(newProfile);
 	} catch (error) {
-		return json({error: "something wetn wrong"}, {status: 400})
+		return json({ error: 'something wetn wrong' }, { status: 400 });
 	}
 };

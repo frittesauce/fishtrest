@@ -8,8 +8,8 @@ import { desc, eq, ilike, or } from 'drizzle-orm';
 export const GET: RequestHandler = async ({ request, url }: { request: Request; url: URL }) => {
 	const query = await url.searchParams.get('query');
 
-	if(!query) {
-		return json({error: "no query provided?"}, {status: 400})
+	if (!query) {
+		return json({ error: 'no query provided?' }, { status: 400 });
 	}
 
 	const session = await auth.api.getSession({
@@ -36,22 +36,21 @@ export const GET: RequestHandler = async ({ request, url }: { request: Request; 
 				desc(post.createdAt)
 			)
 			.limit(20);
-		
+
 		const userResult = await db
 			.select({
-			id: profile.id,
-			handle: profile.handle,
-			avatarUrl: profile.avatarUrl,})
+				id: profile.id,
+				handle: profile.handle,
+				avatarUrl: profile.avatarUrl
+			})
 			.from(profile)
 			.where(ilike(profile.handle, `%${query}%`))
-			.orderBy(
-				desc(ilike(profile.handle, `%${query}%`)),
-			)
+			.orderBy(desc(ilike(profile.handle, `%${query}%`)))
 			.limit(4);
 		const result = {
 			posts: postResult,
 			users: userResult
-		}
+		};
 
 		return json(result);
 	} catch (error) {
