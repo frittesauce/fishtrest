@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test';
-import { existingPostId } from './gloablconst';
 
 const apiUrl = 'http://localhost:3000/api/search';
 
