@@ -10,8 +10,8 @@ test('returns error 400 if id is missing ', async ({ request }) => {
 });
 
 test('return a post if post exists', async ({ request }) => {
-	const response = await request.get(`${apiUrl}?id=24`);
+	const response = await request.get(`${apiUrl}?id=36`);
 
 	expect(response.ok()).toBeTruthy();
-	expect(await response.json()).toHaveProperty('id', 24);
+	expect(await response.json()).toHaveProperty('id', 36);
 });

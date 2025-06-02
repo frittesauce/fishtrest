@@ -30,7 +30,7 @@ export const GET: RequestHandler = async ({ request, url }: { request: Request; 
 	try {
 		if (feedType == 'main') {
 			if (!profileId) {
-				return json({ error: 'you need a profile for this feed' });
+				return json({ error: 'you need a profile for this feed' }, { status: 400 });
 			}
 			const feed = await db
 				.select(postObject(profileId.id))
@@ -42,7 +42,7 @@ export const GET: RequestHandler = async ({ request, url }: { request: Request; 
 			return json(feed);
 		} else if (feedType == 'following') {
 			if (!profileId) {
-				return json({ error: 'you need a profile for this feed' });
+				return json({ error: 'you need a profile for this feed' }, { status: 400 });
 			}
 			const feed = await db
 				.select(postObject(profileId.id))
