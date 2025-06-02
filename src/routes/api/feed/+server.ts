@@ -3,11 +3,13 @@ import { db } from '@/db';
 import { follower, post, profile } from '@/db/schema';
 import { postObject } from '@/types/post';
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { desc, eq, exists, and, sql } from 'drizzle-orm';
+import { desc, eq, exists, and, sql, not, inArray } from 'drizzle-orm';
 
 export const GET: RequestHandler = async ({ request, url }: { request: Request; url: URL }) => {
-	const feedType = (await url.searchParams.get('type')) || 'main';
-	const handle = await url.searchParams.get('handle');
+	const feedType = url.searchParams.get('type') || 'main';
+	const handle = url.searchParams.get('handle');
+
+	const excludePosts: any[] = url.searchParams.get('excludePosts')?.split(',') || [];
 
 	const tabs = ['main', 'profile', 'following'];
 
@@ -37,6 +39,7 @@ export const GET: RequestHandler = async ({ request, url }: { request: Request; 
 				.from(post)
 				.leftJoin(profile, eq(profile.id, post.userId))
 				.orderBy(sql`random()`)
+				.where(not(inArray(post.id, excludePosts)))
 				.limit(20);
 
 			return json(feed);
@@ -50,11 +53,16 @@ export const GET: RequestHandler = async ({ request, url }: { request: Request; 
 				.leftJoin(profile, eq(profile.id, post.userId))
 				.orderBy(desc(post.createdAt))
 				.where(
-					exists(
-						db
-							.select()
-							.from(follower)
-							.where(and(eq(follower.targetUserId, profile.id), eq(follower.userId, profileId.id)))
+					and(
+						exists(
+							db
+								.select()
+								.from(follower)
+								.where(
+									and(eq(follower.targetUserId, profile.id), eq(follower.userId, profileId.id))
+								)
+						),
+						not(inArray(post.id, excludePosts))
 					)
 				)
 				.limit(20);
@@ -80,7 +88,7 @@ export const GET: RequestHandler = async ({ request, url }: { request: Request; 
 				.from(post)
 				.leftJoin(profile, eq(profile.id, post.userId))
 				.orderBy(desc(post.createdAt))
-				.where(eq(post.userId, userExist.id))
+				.where(and(eq(post.userId, userExist.id), not(inArray(post.id, excludePosts))))
 				.limit(20);
 
 			return json(feed);

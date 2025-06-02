@@ -4,14 +4,28 @@
 	import { toast } from 'svelte-sonner';
 	import { activeFeed, mainFeed } from '@/stores/feed';
 
-	async function loadPosts() {
-		const response = await fetch(`/api/feed?type=${$activeFeed}`);
+	async function loadPosts(append = false) {
+		const response = await fetch(
+			`/api/feed?type=${$activeFeed}&excludePosts=${$mainFeed.length > 0 ? $mainFeed.map((post: any) => post.id).join(',') : `0`}`
+		);
 
 		if (!response.ok) {
 			return toast.error('failed to fetch feed, try again later!');
 		}
 
-		mainFeed.set(await response.json());
+		const body = await response.json();
+
+		if (append) {
+			if (body.length < 1) {
+				return toast.error('cant load more posts sorry!');
+			}
+			mainFeed.update((f) => {
+				if (f.length > 250) f = f.slice(50);
+				return f.concat(body);
+			});
+		} else {
+			mainFeed.set(body);
+		}
 	}
 
 	onMount(async () => {
@@ -40,5 +54,10 @@
 		{#each $mainFeed as feedItem (feedItem.id)}
 			<Post post={feedItem}></Post>
 		{/each}
+		<button
+			onclick={() => {
+				loadPosts(true);
+			}}>load more?</button
+		>
 	</div>
 </main>

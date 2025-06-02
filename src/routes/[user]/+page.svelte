@@ -27,16 +27,28 @@
 
 	let updateProfile = $state({ bio: data.profile.bio, loading: false });
 
-	async function loadUserPosts() {
-		const response = await fetch(`/api/feed?type=profile&handle=${data.profile.handle}`);
+	async function loadUserPosts(append = false) {
+		const response = await fetch(
+			`/api/feed?type=profile&handle=${data.profile.handle}&excludePosts=${posts.length > 0 ? posts.map((post: any) => post.id).join(',') : `0`}`
+		);
 
 		if (!response.ok) {
-			return toast.error('failed to fetch posts, try again later!');
+			return toast.error('failed to fetch feed, try again later!');
 		}
 
 		const body = await response.json();
 
-		posts = body;
+		if (append) {
+			if (body.length < 1) {
+				return toast.error('cant load more posts sorry!');
+			}
+			let f = posts;
+
+			if (f.length > 250) f = f.slice(50);
+			posts = f.concat(body);
+		} else {
+			posts = body;
+		}
 	}
 
 	async function loadFollowing() {
@@ -157,5 +169,10 @@
 				}}
 			></Post>
 		{/each}
+		<button
+			onclick={() => {
+				loadUserPosts(true);
+			}}>load more?</button
+		>
 	</div>
 </div>
