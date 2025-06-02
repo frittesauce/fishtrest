@@ -1,5 +1,5 @@
 import { expect, request, test } from '@playwright/test';
-import { authcookie } from './gloablconst';
+import { authcookie, existingPostId, existingUsername } from './gloablconst';
 
 const apiUrl = 'http://localhost:3000/api/feed';
 const baseUrl = 'http://localhost:3000';
@@ -67,7 +67,7 @@ test('return an error if you if user doesnt exist for the profile page type', as
 test('return all uses post if you give a username for the profile page type', async ({
 	request
 }) => {
-	const response = await request.get(`${apiUrl}?type=profile&handle=@chrisdevis`);
+	const response = await request.get(`${apiUrl}?type=profile&handle=${existingUsername}`);
 
 	expect(response.ok()).toBeTruthy();
 });
