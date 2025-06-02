@@ -9,7 +9,7 @@ export const GET: RequestHandler = async ({ request, url }: { request: Request; 
 	const query = await url.searchParams.get('query');
 
 	if(!query) {
-		return json({error: "no query provided?"}, {status: 500})
+		return json({error: "no query provided?"}, {status: 400})
 	}
 
 	const session = await auth.api.getSession({

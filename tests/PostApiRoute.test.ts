@@ -1,6 +1,5 @@
 import { expect, test } from '@playwright/test';
 import { existingPostId } from './gloablconst';
-// import { idText } from 'typescript';
 
 const apiUrl = 'http://localhost:3000/api/posts';
 
