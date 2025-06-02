@@ -3,7 +3,7 @@ import { db } from '@/db';
 import { follower, post, profile } from '@/db/schema';
 import { postObject } from '@/types/post';
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { desc, eq, exists, and } from 'drizzle-orm';
+import { desc, eq, exists, and, sql } from 'drizzle-orm';
 
 export const GET: RequestHandler = async ({ request, url }: { request: Request; url: URL }) => {
 	const feedType = (await url.searchParams.get('type')) || 'main';
@@ -36,7 +36,7 @@ export const GET: RequestHandler = async ({ request, url }: { request: Request; 
 				.select(postObject(profileId.id))
 				.from(post)
 				.leftJoin(profile, eq(profile.id, post.userId))
-				.orderBy(desc(post.createdAt))
+				.orderBy(sql`random()`)
 				.limit(20);
 
 			return json(feed);
