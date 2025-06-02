@@ -55,6 +55,10 @@ export const PATCH: RequestHandler = async ({ request }: { request: Request }) =
 		.where(eq(profile.userId, session.user.id))
 		.limit(1);
 
+	if(!userProfile) {
+		return json({error: "you lack a profile"}, {status: 400})
+	}
+
 	if (!bio) {
 		return json({ error: 'nothing to update' }, { status: 400 });
 	}
