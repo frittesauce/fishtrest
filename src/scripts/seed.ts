@@ -1,68 +1,76 @@
-import { authClient } from "@/auth-client";
-import { faker } from "@faker-js/faker";
-import {  readdirSync, readFileSync } from "fs";
-import path from "path";
-const baseUrl = "http://localhost:3000"
-const catDir = path.resolve(__dirname, "cats")
-
-
+import { authClient } from '@/auth-client';
+import { exDb } from '@/db';
+import { profile, user } from '@/db/schema';
+import { exMinioClient } from '@/server/externalMinio';
+import { faker } from '@faker-js/faker';
+import { eq } from 'drizzle-orm';
+import { readdirSync, readFileSync } from 'fs';
+import path from 'path';
+import sharp from 'sharp';
+const catDir = path.resolve(__dirname, 'cats');
 
 function randomCatImage() {
-    const catImages = readdirSync(catDir)
+	const catImages = readdirSync(catDir);
 
-    const randomCatFile = catImages[Math.floor(Math.random() * catImages.length)]
+	const randomCatFile = catImages[Math.floor(Math.random() * catImages.length)];
 	const fullPath = path.join(catDir, randomCatFile);
 	const buffer = readFileSync(fullPath);
-    
-    return {buffer, name: randomCatFile}
 
+	return { buffer, name: randomCatFile };
 }
 
 async function seed(userNum: number = 1, postPerUser: number = 1) {
+	let sessions: any[] = [];
+	let users: any[] = [];
 
-    let users: any[] = []
+	for (let i = 0; i < userNum; i++) {
+		const firstName = faker.person.firstName();
+		const lastName = faker.person.lastName();
+		const email = faker.internet.email({ firstName });
+		const password = 'password';
 
-    for (let i = 0; i < userNum; i++) {
-        const firstName = faker.person.firstName()
-        const lastName = faker.person.lastName()
-        const email = faker.internet.email({firstName})
-        const password = "password"
-        
+		await authClient.signUp
+			.email({
+				email,
+				password,
+				name: `${firstName} ${lastName}`
+			})
+			.then((e) => {
+				sessions.push(e);
+			});
+	}
 
-        await authClient.signUp.email({
-            email,
-            password,
-            name: `${firstName} ${lastName}`
-        }).then((e) => {
-            users.push(e)
-        })
-    }
+	for (let session of sessions) {
+		const userId = session.data.user.id;
 
-    for (let user of users) {
+		const { buffer } = randomCatImage();
 
-        const formdata = new FormData
+		const image = new Blob([new Uint8Array(buffer)]);
+		const username = faker.internet.username();
 
-        const {buffer} = randomCatImage()
+		const [newProfile] = await exDb
+			.insert(profile)
+			.values({
+				handle: username,
+				userId: userId
+			})
+			.returning();
 
-        const blob = new Blob([new Uint8Array(buffer)])
+		await exDb.update(user).set({ finishedOnboard: true }).where(eq(user.id, newProfile.userId));
 
-		formdata.append('image', blob);
-		formdata.append('username', faker.internet.username());
+		const objectName = `avatars/${newProfile.id}/medium.webp`;
 
-        const response = await fetch(`${baseUrl}/api/profileInit`, {
-            method: "POST",
-            body: formdata,
-            credentials: "include",
-            headers: {
-                
-                'Cookie': `better-auth.session_token=${user.session_token}`
-            }
-        })
+		const processedBuffer = await sharp(buffer, { animated: true })
+			.resize(320, 320, { fit: 'fill', position: 'center' })
+			.webp({ loop: 0 })
+			.toBuffer();
 
-        const body = response.status
+		await exMinioClient.putObject('fishtrest', objectName, processedBuffer);
 
-        console.log(response)
-    }
+		await exDb.update(profile).set({ avatarUrl: objectName }).where(eq(profile.id, newProfile.id));
+
+		for (let i = 0; i < postPerUser; i++) {}
+	}
 }
 
-seed(1)
+seed(1);

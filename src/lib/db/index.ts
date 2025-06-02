@@ -13,3 +13,10 @@ export const db = drizzle({
 	},
 	schema
 });
+
+export const exDb = drizzle({
+	connection: {
+		connectionString: process.env.DATABASE_URL
+	},
+	schema
+})
