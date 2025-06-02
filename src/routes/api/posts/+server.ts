@@ -24,16 +24,16 @@ export const GET: RequestHandler = async ({ url, request }: { url: URL; request:
 		[profileId] = await db.select().from(profile).where(eq(profile.userId, userId)).limit(1);
 	}
 
-	const [userProfile] = await db
+	const [postUser] = await db
 		.select(postObject(profileId ? profileId.id : 0))
 		.from(post)
 		.where(eq(post.id, Number(postId)))
 		.leftJoin(profile, eq(profile.id, post.userId))
 		.limit(1);
 
-	if (!userProfile) {
-		return json({ error: 'user doesnt exist!' }, { status: 404 });
+	if (!postUser) {
+		return json({ error: 'post doesnt exist!' }, { status: 404 });
 	}
 
-	return json(userProfile, { status: 200 });
+	return json(postUser, { status: 200 });
 };

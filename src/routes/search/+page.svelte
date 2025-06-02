@@ -5,7 +5,6 @@
 	import { onDestroy } from 'svelte';
 	import { get } from 'svelte/store';
 	import { writable } from 'svelte/store';
-	import LoadingComponent from '../../components/LoadingComponent.svelte';
 	import Avatar from '../../components/Avatar.svelte';
 	import { env } from '$env/dynamic/public';
 	import { goto } from '$app/navigation';
@@ -52,12 +51,8 @@
 
 		if (response.ok) {
 			const body = await response.json();
-			if (!body || body.posts.length < 1) {
-				toast.error('No posts found');
-			} else {
-				posts.set(body.posts);
-				users.set(body.users);
-			}
+			posts.set(body.posts);
+			users.set(body.users);
 		} else {
 			toast.error('Search failed');
 		}
@@ -76,7 +71,7 @@
 		<div class="mt-2 flex flex-col">
 			{#if $users.length > 0}
 				<p class="text-2xl font-bold">Users:</p>
-				<div class="mb-5 flex">
+				<div class="mb-5 flex flex-row gap-x-2">
 					{#each $users as user (user.id)}
 						<button
 							class="flex cursor-pointer items-center rounded-md bg-gray-400 p-2 align-middle shadow"
