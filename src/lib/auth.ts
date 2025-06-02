@@ -13,14 +13,12 @@ export const auth = betterAuth({
 			clientSecret: env.DISCORD_CLIENT_SECRET
 		}
 	},
+	emailAndPassword: {
+		enabled: true,
+		minPasswordLength: 3
+	},
 	user: {
 		additionalFields: {
-			role: {
-				type: 'string',
-				required: true,
-				defaultValue: 'user',
-				input: false
-			},
 			finishedOnboard: {
 				type: 'boolean',
 				required: true,

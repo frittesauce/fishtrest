@@ -1,12 +1,17 @@
 <script lang="ts">
 	import { env } from '$env/dynamic/public';
-	import { signIn } from '$lib/auth-client';
+	import { authClient, signIn } from '$lib/auth-client';
 	import { currentUser } from '$lib/stores/user';
 	import { toast } from 'svelte-sonner';
-	import { goto, invalidateAll } from '$app/navigation';
+	import { goto, invalidateAll, replaceState } from '$app/navigation';
 	import LoggedInPage from './LoggedInPage.svelte';
 
 	let { data } = $props();
+
+	let signingup = $state(false);
+	let userEmail: string = $state('');
+	let userPassword: string = $state('');
+	let userConfirmPassword: string = $state('');
 
 	let userData = {
 		username: ''
@@ -33,11 +38,46 @@
 		step = customStep! | 1;
 	}
 
-	async function handleLogin(provider: 'discord') {
+	async function handleSocialLogin(provider: 'discord') {
 		signIn.social({
 			provider: provider,
 			callbackURL: env.PUBLIC_BASE_URL
 		});
+	}
+
+	async function handleEmailLogin() {
+		if (signingup) {
+			if (userEmail.length < 3 || userPassword.length < 3 || userConfirmPassword.length < 3) {
+				return toast.error('fields are empty');
+			}
+			if (userPassword != userConfirmPassword) {
+				return toast.error('passwords dont match!');
+			}
+
+			const { data, error } = await authClient.signUp.email({
+				email: userEmail,
+				password: userConfirmPassword,
+				name: 'sepp de geit',
+				image: 'https://example.com/image.png',
+
+				fetchOptions: {
+					onSuccess: () => {
+						step += 1;
+					}
+				}
+			});
+		} else {
+			const { data, error } = await authClient.signIn.email({
+				email: userEmail,
+				password: userPassword,
+
+				fetchOptions: {
+					onSuccess: () => {
+						invalidateAll();
+					}
+				}
+			});
+		}
 	}
 
 	function handleImageUpload() {
@@ -112,12 +152,45 @@
 
 {#snippet authMethod()}
 	<h2>choose an authentication method!</h2>
-	<button
-		class=" w-64 rounded-lg border border-gray-700 p-2 text-xl font-semibold shadow-sm hover:cursor-pointer hover:bg-gray-200"
-		onclick={() => {
-			handleLogin('discord');
-		}}>discord</button
-	>
+	<hr />
+	<form class="flex flex-col gap-y-2">
+		<p>email</p>
+		<input required bind:value={userEmail} name="email" type="email" />
+		<p>pasword</p>
+		<input required bind:value={userPassword} name="password" type="password" />
+		{#if signingup}
+			<p>confirm password</p>
+			<input required bind:value={userConfirmPassword} name="confirm" type="password" />
+		{/if}
+		<div>
+			<button
+				class=" w-32 rounded-lg border border-gray-700 p-2 text-xl font-semibold shadow-sm hover:cursor-pointer hover:bg-gray-200"
+				onclick={handleEmailLogin}>sign in</button
+			>
+			or
+			<button
+				type="button"
+				class=" w-32 rounded-lg border border-gray-700 p-2 text-xl font-semibold shadow-sm hover:cursor-pointer hover:bg-gray-200"
+				onclick={() => {
+					if (signingup == false) {
+						signingup = true;
+					} else {
+						handleEmailLogin();
+					}
+				}}>sign up</button
+			>
+		</div>
+	</form>
+	{#if !signingup}
+		<hr />
+
+		<button
+			class=" w-64 rounded-lg border border-gray-700 p-2 text-xl font-semibold shadow-sm hover:cursor-pointer hover:bg-gray-200"
+			onclick={() => {
+				handleSocialLogin('discord');
+			}}>discord</button
+		>
+	{/if}
 {/snippet}
 
 {#snippet userName()}
