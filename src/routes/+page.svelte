@@ -155,12 +155,24 @@
 	<hr />
 	<form class="flex flex-col gap-y-2">
 		<p>email</p>
-		<input required bind:value={userEmail} name="email" type="email" />
+		<input class="border shadow" required bind:value={userEmail} name="email" type="email" />
 		<p>pasword</p>
-		<input required bind:value={userPassword} name="password" type="password" />
+		<input
+			class="border shadow"
+			required
+			bind:value={userPassword}
+			name="password"
+			type="password"
+		/>
 		{#if signingup}
 			<p>confirm password</p>
-			<input required bind:value={userConfirmPassword} name="confirm" type="password" />
+			<input
+				class="border shadow"
+				required
+				bind:value={userConfirmPassword}
+				name="confirm"
+				type="password"
+			/>
 		{/if}
 		<div>
 			<button

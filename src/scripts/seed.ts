@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { authClient } from '@/auth-client';
 import { exDb } from '@/db';
-import { post, profile, user } from '@/db/schema';
+import { follower, like, post, profile, user } from '@/db/schema';
 import { exMinioClient } from '@/server/externalMinio';
 import { faker } from '@faker-js/faker';
 import { eq } from 'drizzle-orm';
@@ -19,11 +20,23 @@ function randomCatImage() {
 	return { buffer, name: randomCatFile };
 }
 
-async function seed(userNum: number = 1, postPerUser: number = 1) {
-	let sessions: any[] = [];
-	let users: any[] = [];
+async function seed(
+	userNum: number = 1,
+	postPerUser: number = 1,
+	likesPerUser: number = 1,
+	followesPerUser: number = 1
+) {
+	const sessions: any[] = [];
+	const profiles: any[] = [];
+	const posts: any[] = [];
+
+	let index = 0;
 
 	for (let i = 0; i < userNum; i++) {
+		console.log(index);
+
+		index++;
+
 		const firstName = faker.person.firstName();
 		const lastName = faker.person.lastName();
 		const email = faker.internet.email({ firstName });
@@ -40,7 +53,13 @@ async function seed(userNum: number = 1, postPerUser: number = 1) {
 			});
 	}
 
+	// create posts for every user
+
+	index = 0;
+
 	for (let session of sessions) {
+		index++;
+		console.log(`creating users, ${Math.floor((index / sessions.length) * 100)}% done `);
 		const userId = session.data.user.id;
 
 		const { buffer } = randomCatImage();
@@ -67,11 +86,18 @@ async function seed(userNum: number = 1, postPerUser: number = 1) {
 
 		await exMinioClient.putObject('fishtrest', objectName, processedBuffer);
 
-		await exDb.update(profile).set({ avatarUrl: objectName }).where(eq(profile.id, newProfile.id));
+		const [finProfile] = await exDb
+			.update(profile)
+			.set({ avatarUrl: objectName })
+			.where(eq(profile.id, newProfile.id))
+			.returning();
 
+		profiles.push(finProfile);
+
+		console.log('creating user posts!');
 		for (let i = 0; i < postPerUser; i++) {
 			const title = faker.book.title();
-			const description = faker.animal.cat();
+			const description = faker.word.words({ count: 15 });
 
 			const [newPost] = await exDb
 				.insert(post)
@@ -98,8 +124,38 @@ async function seed(userNum: number = 1, postPerUser: number = 1) {
 				.set({ image: `${objectName}` })
 				.where(eq(post.id, newPost.id))
 				.returning();
+
+			posts.push(finalPost);
+		}
+		console.log('✅created posts for user!');
+	}
+
+	console.log('✅ users made');
+
+	for (const profile of profiles) {
+		console.log('following profiles and liking posts');
+
+		const userId = profile.id;
+
+		const unLikedPosts = [...posts];
+		const unFollowedProfiles = [...profiles];
+
+		for (let i = 0; i < likesPerUser; i++) {
+			const postToLike = unLikedPosts.splice(Math.floor(Math.random() * unLikedPosts.length), 1)[0];
+
+			await exDb.insert(like).values({ postId: postToLike.id, userId: userId });
+		}
+
+		for (let i = 0; i < followesPerUser; i++) {
+			const userToFollow = unFollowedProfiles.splice(
+				Math.floor(Math.random() * unFollowedProfiles.length),
+				1
+			)[0];
+
+			await exDb.insert(follower).values({ userId: userId, targetUserId: userToFollow.id });
 		}
 	}
+	console.log('✅ done following profiles and liking posts');
 }
 
-seed(10, 4);
+seed(4, 4, 4, 4);

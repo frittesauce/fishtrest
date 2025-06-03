@@ -1,4 +1,4 @@
 export const authcookie =
-	'fxnC3VFkvLYkqeavjhgoKVHZacyaHfvi.WrSB3eDyVS3C04mF7NneyFs5dI7lsUwowVFoJURjv24%3D';
-export const existingUsername = '@sigma';
-export const existingPostId = 12;
+	'3bvv44LW8at4TrydNncRw8QW7kAVsdiY.2ASSnUbp3XXOIqcZTpplDh7wLKCcSUl%2F8R7Sih6tKGM%3D';
+export const existingUsername = '@chrisdevis';
+export const existingPostId = 36;

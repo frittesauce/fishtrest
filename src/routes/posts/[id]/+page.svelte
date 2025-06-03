@@ -15,7 +15,7 @@
 		{post}
 		onDeleteSucess={() => {
 			goto('/');
-			toast.success('delted post sucesfully!');
+			toast.success('deleted post succesfully!');
 		}}
 		postPage
 	></Post>

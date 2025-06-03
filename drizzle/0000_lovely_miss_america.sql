@@ -14,12 +14,18 @@ CREATE TABLE "account" (
 	"updated_at" timestamp NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "followers" (
+	"user_id" serial NOT NULL,
+	"target_user_id" serial NOT NULL,
+	"followedAt" timestamp DEFAULT now(),
+	CONSTRAINT "followers_pkey" PRIMARY KEY("target_user_id","user_id")
+);
+--> statement-breakpoint
 CREATE TABLE "likes" (
 	"user_id" serial NOT NULL,
 	"post_id" serial NOT NULL,
 	"liked_at" timestamp DEFAULT now(),
-	CONSTRAINT "likes_user_id_unique" UNIQUE("user_id"),
-	CONSTRAINT "likes_post_id_unique" UNIQUE("post_id")
+	CONSTRAINT "likes_pkey" PRIMARY KEY("post_id","user_id")
 );
 --> statement-breakpoint
 CREATE TABLE "posts" (
@@ -75,6 +81,8 @@ CREATE TABLE "verification" (
 );
 --> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "followers" ADD CONSTRAINT "followers_user_id_profile_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."profile"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "followers" ADD CONSTRAINT "followers_target_user_id_profile_id_fk" FOREIGN KEY ("target_user_id") REFERENCES "public"."profile"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "likes" ADD CONSTRAINT "likes_user_id_profile_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."profile"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "likes" ADD CONSTRAINT "likes_post_id_posts_id_fk" FOREIGN KEY ("post_id") REFERENCES "public"."posts"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "posts" ADD CONSTRAINT "posts_user_id_profile_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."profile"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

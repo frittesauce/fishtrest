@@ -87,8 +87,8 @@ export const GET: RequestHandler = async ({ request, url }: { request: Request; 
 				.select(postObject(profileId ? profileId.id : 0))
 				.from(post)
 				.leftJoin(profile, eq(profile.id, post.userId))
-				.orderBy(desc(post.createdAt))
 				.where(and(eq(post.userId, userExist.id), not(inArray(post.id, excludePosts))))
+				.orderBy(desc(post.createdAt))
 				.limit(20);
 
 			return json(feed);

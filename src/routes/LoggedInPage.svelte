@@ -29,7 +29,10 @@
 	}
 
 	onMount(async () => {
-		loadPosts();
+		if ($mainFeed.length > 0) {
+		} else {
+			loadPosts();
+		}
 	});
 </script>
 

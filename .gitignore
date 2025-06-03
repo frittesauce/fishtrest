@@ -29,3 +29,5 @@ vite.config.ts.timestamp-*
 /playwright/.cache/
 
 /.VSCodeCounter/
+
+/src/scripts/cats

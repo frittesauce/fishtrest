@@ -3,6 +3,8 @@
 	import { toast } from 'svelte-sonner';
 	import { goto } from '$app/navigation';
 	import Avatar from '../../../components/Avatar.svelte';
+	import { mainFeed } from '@/stores/feed';
+	import type PostType from '@/types/post';
 
 	let image = $state('/default.png');
 	let fileInput: Blob = $state(new Blob());
@@ -51,8 +53,12 @@
 		});
 
 		if (res.ok) {
-			toast.success('post has been posted!');
-			goto('/');
+			const body: PostType = await res.json();
+
+			if (body) {
+				toast.success('post has been posted!');
+				goto(`/${$currentProfile.handle}`);
+			}
 		}
 
 		loadingPost = false;
