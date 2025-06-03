@@ -90,7 +90,7 @@
 				{#if editing}
 					<input class=" rounded-md border p-1 text-lg shadow" bind:value={updateProfile.bio} />
 				{:else}
-					<p class=" text-lg">
+					<p class=" max-w-sm text-lg">
 						{data.profile.bio}
 					</p>
 				{/if}

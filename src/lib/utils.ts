@@ -4,8 +4,8 @@ import { cubicOut } from 'svelte/easing';
 import type { TransitionConfig } from 'svelte/transition';
 
 export const hashtagRegex = /#(\w+)/g;
-export const tagRegex = /@(\w+)/g;
-export const combinedRegex = /(@\w+|#\w+)/g;
+export const tagRegex = /@([\w.]+)/g;
+export const combinedRegex = /(@[\w.]+|#\w+)/g;
 
 export function cn(...inputs: ClassValue[]) {
 	return twMerge(clsx(inputs));

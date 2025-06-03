@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { combinedRegex, hashtagRegex, tagRegex } from '@/utils';
 
 	let { content } = $props();
@@ -10,16 +10,21 @@
 <div>
 	{#each parts as part}
 		{#if hashtagRegex.test(part)}
-			<a
-				href={`/search?prompt=${encodeURIComponent('#' + part.slice(1))}`}
-				class="font-semibold text-indigo-800">#{part.slice(1)}</a
+			<button
+				onclick={() => {
+					goto(`/search?prompt=${encodeURIComponent('#' + part.slice(1))}`, {
+						invalidateAll: true,
+						replaceState: true
+					});
+				}}
+				class="cursor-pointer font-semibold text-indigo-800">#{part.slice(1)}</button
 			>
 		{:else if tagRegex.test(part)}
 			<button
 				onclick={() => {
 					goto(`/@${part.slice(1)}`);
 				}}
-				class=" font-semibold text-indigo-800">@{part.slice(1)}</button
+				class=" cursor-pointer font-semibold text-indigo-800">@{part.slice(1)}</button
 			>
 		{:else}
 			<span>{part}</span>

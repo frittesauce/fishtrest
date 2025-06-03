@@ -67,11 +67,14 @@ async function seed(
 		const image = new Blob([new Uint8Array(buffer)]);
 		const username = faker.internet.username();
 
+		const bio = faker.word.words({ count: { min: 5, max: 15 } });
+
 		const [newProfile] = await exDb
 			.insert(profile)
 			.values({
-				handle: username,
-				userId: userId
+				handle: `@${username}`,
+				userId: userId,
+				bio
 			})
 			.returning();
 
@@ -94,10 +97,11 @@ async function seed(
 
 		profiles.push(finProfile);
 
-		console.log('creating user posts!');
 		for (let i = 0; i < postPerUser; i++) {
-			const title = faker.book.title();
-			const description = faker.word.words({ count: 15 });
+			process.stdout.write(`\rcreating user posts ${Math.floor((i / postPerUser) * 100)}% done`);
+
+			const title = faker.word.words({ count: { min: 1, max: 10 } });
+			const description = `${faker.word.words({ count: { min: 10, max: 25 } })} #${faker.word.words({ count: 1 })} ${Math.random() < 0.05 ? `@${profiles[Math.floor(Math.random() * profiles.length)].handle}` : ''}`;
 
 			const [newPost] = await exDb
 				.insert(post)
@@ -158,4 +162,4 @@ async function seed(
 	console.log('✅ done following profiles and liking posts');
 }
 
-seed(4, 4, 4, 4);
+seed(4, 1000, 1000, 0);
